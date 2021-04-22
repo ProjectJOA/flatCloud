@@ -1,6 +1,7 @@
 import utils.exec_aws_cmd_util as cmdUtil
 import network.my_vpcs as myVpcs
 import network.my_subnet as mySubnet
+import network.my_gateway as myGw
 import json
 
 #진행중..
@@ -32,9 +33,11 @@ def create_route():
 	selectedVpcInfoArr = myVpcs.select_vpc()
 	print("Vpc에 만들어진 route-table를 선택합니다.")
 	selectedRouteTableArr = select_routeTable(selectedVpcInfoArr[2])
+	selectedGatewayArr = myGw.select_gw()
 	#"aws ec2 describe-route-tables --filter Name=vpc-id,Values=vpc-0ee42dfba9b4f6010"
-	#'aws ec2 create-route --route-table-id rtb-0847905b2316cfd8d --destination-cidr-block 0.0.0.0/0 --gateway-id igw-05c6177541ae958cb'
-	return selectedRouteTableArr
+	command = 'aws ec2 create-route --route-table-id '+selectedRouteTableArr[1]+' --destination-cidr-block 0.0.0.0/0 --gateway-id '+selectedGatewayArr[1]
+	json_res = cmdUtil.exec_commd(command)
+	return json_res
 
 def get_simple_routeTable_info(jsonObj):
 	routeTableId = jsonObj.get("RouteTableId")
@@ -55,6 +58,21 @@ def search_routeTables(srcStr):
 		command = 'aws ec2 describe-route-tables --filter Name=vpc-id,Values='+srcStr+' --query RouteTables[*]'
 	json_res = cmdUtil.getJson_exec_commd(command)
 	return json_res
+
+def search_all_routeTables_arr():
+	ret_obj = search_routeTables("search-all")
+	objArr=[]
+	if len(ret_obj) < 1:
+		print("먼저 route table을 생성해 주세요.")
+		exit()
+	else:
+		i=0
+		for oneObj in ret_obj:
+			i+=1
+			objInfo = get_simple_routeTable_info(oneObj)
+			objArr.append(objInfo)
+			print(objInfo)
+	return objArr
 
 def select_routeTable(searchVpcId):
 	ret_obj = search_routeTables(searchVpcId)

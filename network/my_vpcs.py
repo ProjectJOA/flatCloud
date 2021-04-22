@@ -40,6 +40,21 @@ def search_vpcs(srcStr):
 	json_res = cmdUtil.getJson_exec_commd(command)
 	return json_res
 
+def search_all_vpcs_arr():
+	ret_obj = search_vpcs("search-all")
+	vpcArr=[]
+	if len(ret_obj) < 1:
+		print("먼저 Vpc를 생성해 주세요.")
+		exit()
+	else:
+		i=0
+		for vpcObj in ret_obj:
+			i+=1
+			vpcInfo = get_simple_vpc_info(vpcObj)
+			vpcArr.append(vpcInfo)
+			print(vpcInfo)
+	return vpcArr
+
 def search_vpcs_byCidr(cidr ):
 	command = 'aws ec2 describe-vpcs --filter Name=cidr,Values='+cidr +' --query Vpcs[*]'
 	json_res = cmdUtil.getJson_exec_commd(command)

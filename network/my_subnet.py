@@ -58,6 +58,21 @@ def search_subnets(srcStr):
 	json_res = cmdUtil.getJson_exec_commd(command)
 	return json_res
 
+def search_all_subnets_arr():
+	ret_obj = search_subnets("search-all")
+	objArr=[]
+	if len(ret_obj) < 1:
+		print("먼저 subnet을 생성해 주세요.")
+		exit()
+	else:
+		i=0
+		for oneObj in ret_obj:
+			i+=1
+			objInfo = get_simple_vpc_info(oneObj)
+			objArr.append(objInfo)
+			print(objInfo)
+	return objArr
+
 def get_simple_subnet_info(jsonObj):
 	cidrBlock = jsonObj.get("CidrBlock")
 	subnetId = jsonObj.get("SubnetId")
