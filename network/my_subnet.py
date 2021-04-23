@@ -68,7 +68,7 @@ def search_all_subnets_arr():
 		i=0
 		for oneObj in ret_obj:
 			i+=1
-			objInfo = get_simple_vpc_info(oneObj)
+			objInfo = get_simple_subnet_info(oneObj)
 			objArr.append(objInfo)
 			print(objInfo)
 	return objArr

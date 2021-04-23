@@ -9,6 +9,7 @@ def create_vpc():
 	#print("AWS VPC 의 IP 대역을 입력하세요. 예)10.5.0.0/16 ")
 	vpc_ips="10.5.0.0/16" #default vpc cidr
 	startNo=5
+	print("VPC Cidr을 찾고 있습니다.")
 	vpc_ips=get_unregistered_vpcmax_cidr(5)
 	print(vpc_ips+" IP 대역으로 Vpc를 생성합니다.")
 	print("1.생성합니다. 2.IP 대역을 직접 입력합니다.")

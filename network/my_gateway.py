@@ -24,7 +24,7 @@ def search_gw():
 	return json_res
 
 def search_all_gw_arr():
-	ret_obj = search_gw("")
+	ret_obj = search_gw()
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
