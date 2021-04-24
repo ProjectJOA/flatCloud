@@ -63,7 +63,7 @@ def search_instance_image(searchStr):
 		searchStr = "amzn2-ami-hvm-*-x86_64-gp2"
 	else:
 		searchStr = "*"+searchStr+"*"
-	command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))"'
+	command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
 	ret_obj = cmdUtil.getJson_exec_commd(command)
 	if len(ret_obj) < 1:
 		print("해당 이미지가 없습니다.")
