@@ -3,6 +3,7 @@ import network.my_vpcs as myvpcs
 import network.my_subnet as mysubnet
 import network.my_gateway as mygw
 import network.my_net_route as myroute
+import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
 import json
 
@@ -64,13 +65,18 @@ def start_main():
 		print("준비중입니다.")
 	elif selected_first_menu == "6": # ec2 instance 선택
 		print(second_common_menu) # 상세 메뉴 출력
-		print("5.instance 리부트/시작")
-		print("6.instance 종료")
+		print("5.instance 리부트/시작 6.instance 종료")
 		selected_second_menu=input()
 		if selected_second_menu == "1":
 			objArr = myec2.search_all_ec2instance("","","")
+		elif selected_second_menu == "2":
+			objArr = myec2.create_instance()
+		elif selected_second_menu == "4":
+			objArr = myec2.remove_instance()						
 		elif selected_second_menu == "5":
 			objArr = myec2.start_instance()
+		elif selected_second_menu == "6":
+			objArr = myec2.stop_instance()						
 	else:
 		print("준비중입니다")
 

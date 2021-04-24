@@ -46,6 +46,9 @@ def nullToNoname(str, defaultStr):
 	try:
 		if str == "":
 			str = defaultStr
+		elif str == None:
+			str = defaultStr
+
 		return str
 	except:
 		return defaultStr

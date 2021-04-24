@@ -1,38 +1,32 @@
 import utils.exec_aws_cmd_util as cmdUtil
-import network.my_vpcs as myVpcs
 import json
 
-def search_sg(srcKey,srcStr):
-	search_wd=""
-	if srcKey == "vpc-id":
-		search_wd = " Name=vpc-id,Values="+srcStr
-	if search_wd != "":
-		search_wd = "--filter"+search_wd
-	command = 'aws ec2 describe-security-groups '+search_wd+' --query SecurityGroups[*]'
+def search_keypairs():
+	command = 'aws ec2 describe-key-pairs --query KeyPairs[*]'
 	json_res = cmdUtil.getJson_exec_commd(command)
 	return json_res
 
-def get_simple_sg_info(jsonObj):
-	GroupId = jsonObj.get("GroupId")
-	vpcId = jsonObj.get("VpcId")
+def get_simple_keys_info(jsonObj):
+	KeyPairId = jsonObj.get("KeyPairId")
+	KeyName = jsonObj.get("KeyName")
 	tagValue = "noname"
 	tagKey = "Name"
 	if cmdUtil.is_json_key_present(jsonObj,"Tags"):
 		tagValue = cmdUtil.getString_tagValue(jsonObj.get("Tags"),tagKey)
-	retVpcInfo = tagValue+" : "+GroupId+" : "+vpcId
-	return retVpcInfo
+	retObjInfo = tagValue+" : "+KeyName+" : "+KeyPairId
+	return retObjInfo
 
-def select_sg(srcKey,srcStr):
-	ret_obj = search_sg(srcKey,srcStr)
+def select_keypairs():
+	ret_obj = search_keypairs()
 	if len(ret_obj) < 1:
-		print("먼저 Security group 을 생성해 주세요.")
+		print("먼저 key-pairs 를 생성해 주세요.")
 		exit()
 	else:
 		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1
-			objInfo = get_simple_sg_info(oneObj)
+			objInfo = get_simple_keys_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
 	selectedNo=input()
@@ -47,4 +41,4 @@ def select_sg(srcKey,srcStr):
 			selectedObjInfoArr = (objArr[index]).split(' : ')
 			break
 
-	return selectedObjInfoArr		
+	return selectedObjInfoArr	
