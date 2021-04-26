@@ -1,4 +1,5 @@
 import utils.exec_aws_cmd_util as cmdUtil
+import utils.go_main as goMain
 import json
 
 #vpc 생성합니다.
@@ -17,15 +18,19 @@ def create_vpc():
 	if step1 == "1":
 		print("Vpc 생성을 시작합니다.")
 	elif step1 == "2":
-		print("IP 대역을 직접 입력해주세요. 예) 10.5.0.0/16")
-		vpc_ips=input()
-		ret_obj = search_vpcs_byCidr(vpc_ips)
-		if len(ret_obj) > 0:
-			print("입력하신 IP 대역이 이미 등록되어 있습니다.")
-			exit()
+		while 0<1:
+			print("IP 대역을 직접 입력해주세요. 예) 10.5.0.0/16")
+			vpc_ips=input()
+			ret_obj = search_vpcs_byCidr(vpc_ips)
+			if len(ret_obj) > 0:
+				print("입력하신 IP 대역이 이미 등록되어 있습니다.")
+				goMain.go_main()
+			else:
+				break
+			
 	else:
 		print("잘못 입력하셨습니다. 프로그램을 다시 시작해주세요.")
-		exit()
+		goMain.go_main()
 
 	command = 'aws ec2 create-vpc --cidr-block '+vpc_ips+' --query Vpc.VpcId --output text'
 	credVpcId = cmdUtil.create_resource(command, vpcNm)
@@ -46,7 +51,7 @@ def search_all_vpcs_arr():
 	vpcArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Vpc를 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		i=0
 		for vpcObj in ret_obj:
@@ -85,7 +90,7 @@ def select_vpc():
 	ret_obj = search_vpcs("search-all")
 	if len(ret_obj) < 1:
 		print("먼저 Vpc를 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		vpcArr=[]
 		i=0
@@ -98,7 +103,7 @@ def select_vpc():
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedVpcNo) > len(vpcArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedVpcInfoArr=[]
 	for index in range(len(vpcArr)):
