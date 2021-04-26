@@ -47,7 +47,7 @@ def start_main():
 		if selected_second_menu == "1":
 			objArr = mygw.search_all_gw_arr()
 		elif selected_second_menu == "2":
-			json_res = mysubnet.create_gateway()
+			json_res = mygw.create_gateway()
 		else:	
 			print("준비중입니다.")
 	elif selected_first_menu == "4": # Route Table 선택
@@ -62,7 +62,12 @@ def start_main():
 		else:	
 			print("준비중입니다.")				
 	elif selected_first_menu == "5": # Security Group 선택
-		print("준비중입니다.")
+		print(second_common_menu) # 상세 메뉴 출력
+		selected_second_menu=input()
+		if selected_second_menu == "1":
+			objArr = mysg.search_all_sg_arr()	
+		else:				
+			print("준비중입니다.")
 	elif selected_first_menu == "6": # ec2 instance 선택
 		print(second_common_menu) # 상세 메뉴 출력
 		print("5.instance 리부트/시작 6.instance 종료")

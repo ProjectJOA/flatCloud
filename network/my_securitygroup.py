@@ -12,6 +12,21 @@ def search_sg(srcKey,srcStr):
 	json_res = cmdUtil.getJson_exec_commd(command)
 	return json_res
 
+def search_all_sg_arr():
+	ret_obj = search_sg("","")
+	objArr=[]
+	if len(ret_obj) < 1:
+		print("먼저 Security group을 생성해 주세요.")
+		exit()
+	else:
+		i=0
+		for oneObj in ret_obj:
+			i+=1
+			objInfo = get_simple_sg_info(oneObj)
+			objArr.append(objInfo)
+			print(objInfo)
+	return objArr
+
 def get_simple_sg_info(jsonObj):
 	GroupId = jsonObj.get("GroupId")
 	vpcId = jsonObj.get("VpcId")
