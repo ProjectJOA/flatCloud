@@ -87,12 +87,12 @@ def get_simple_vpc_info(jsonObj):
 
 #vpc 목록을 조회하고 사용자의 선택을 받아서 1개의 vpc만 return한다.
 def select_vpc():
+	vpcArr=[]
 	ret_obj = search_vpcs("search-all")
 	if len(ret_obj) < 1:
 		print("먼저 Vpc를 생성해 주세요.")
 		goMain.go_main()
 	else:
-		vpcArr=[]
 		i=0
 		for vpcObj in ret_obj:
 			i+=1

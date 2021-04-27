@@ -61,11 +61,11 @@ def get_simple_gw_info(jsonObj):
 
 def select_gw():
 	ret_obj = search_gw()
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1

@@ -40,11 +40,11 @@ def get_simple_sg_info(jsonObj):
 
 def select_sg(srcKey,srcStr):
 	ret_obj = search_sg(srcKey,srcStr)
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Security group 을 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1

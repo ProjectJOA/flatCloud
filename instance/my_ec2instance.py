@@ -66,11 +66,11 @@ def search_instance_image(searchStr):
 		searchStr = "*"+searchStr+"*"
 	command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
 	ret_obj = cmdUtil.getJson_exec_commd(command)
+	objArr=[]
 	if len(ret_obj) < 1:
 		print("해당 이미지가 없습니다.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1
@@ -102,10 +102,10 @@ def get_simple_image_info(jsonObj):
 
 def search_all_ec2instance(search_vpc, search_subnet, search_tagname):
 	ret_obj = search_ec2instance(search_vpc, search_subnet, search_tagname, "")
+	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 ec2 Instance를 생성해 주세요.")
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1
@@ -132,11 +132,11 @@ def get_simple_ec2instance_info(jsonObj):
 
 def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state):
 	ret_obj = search_ec2instance(search_vpc, search_subnet, search_tagname, instance_state)
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 ec2 Instance를 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1

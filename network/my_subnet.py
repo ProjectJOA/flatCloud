@@ -90,11 +90,11 @@ def get_simple_subnet_info(jsonObj):
 
 def select_subnet():
 	ret_obj = search_subnets('search-all')
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Subnet을 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1

@@ -77,11 +77,11 @@ def search_all_routeTables_arr():
 
 def select_routeTable(searchVpcId):
 	ret_obj = search_routeTables(searchVpcId)
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Route Table 을 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1

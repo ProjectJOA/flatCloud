@@ -19,11 +19,11 @@ def get_simple_keys_info(jsonObj):
 
 def select_keypairs():
 	ret_obj = search_keypairs()
+	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 key-pairs 를 생성해 주세요.")
 		goMain.go_main()
 	else:
-		objArr=[]
 		i=0
 		for oneObj in ret_obj:
 			i+=1
