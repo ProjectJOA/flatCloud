@@ -116,10 +116,10 @@ def search_all_ec2instance(search_vpc, search_subnet, search_tagname):
 
 def get_simple_ec2instance_info(jsonObj):
 	PublicIpAddress = cmdUtil.nullToNoname(jsonObj.get("PublicIpAddress"),"no public ip")
-	PrivateIpAddress = jsonObj.get("PrivateIpAddress")
+	PrivateIpAddress = cmdUtil.nullToNoname(jsonObj.get("PrivateIpAddress"),"no private ip")
 	InstanceId = jsonObj.get("InstanceId")
-	SubnetId = jsonObj.get("SubnetId")
-	VpcId = jsonObj.get("VpcId")
+	SubnetId = cmdUtil.nullToNoname(jsonObj.get("SubnetId"),"no subnet id")
+	VpcId = cmdUtil.nullToNoname(jsonObj.get("VpcId"),"no vpc id")
 	currentState = (jsonObj.get("State")).get("Name")
 	tagValue = ""
 	tagKey = "Name"
@@ -205,7 +205,8 @@ def stop_instance():
 	
 def remove_instance():
 	print("삭제할 ec2 Instance를 선택해 주세요.")
-	selectedObjInfoArr = select_ec2instance("", "", "", "")
+	search_instance_state="running,stopping,stopped"
+	selectedObjInfoArr = select_ec2instance("", "", "", search_instance_state)
 	print("("+selectedObjInfoArr[0]+")"+selectedObjInfoArr[4]+" instance 를 삭제하시겠습니까?(y/n)")
 	nextStep2_YN=input()
 	if nextStep2_YN[0] == 'Y' or nextStep2_YN[0] == 'y':

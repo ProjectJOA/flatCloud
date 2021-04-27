@@ -93,14 +93,19 @@ def start_main():
 	try:
 		first_menu1 = "1.Vpc 2.Subnet 3.Internet Gateway 4.Route Table 5.Security Group"
 		first_menu2 = "6.ec2 instance"
+		first_menu3 = "99.flatCloud 종료"
 
 		print("\n아래 관리 항목중 하나를 선택하세요.")
 		print(first_menu1) # 메뉴 출력
 		print(first_menu2) # 메뉴 출력
+		print(first_menu3) # 메뉴 출력
 
 		selected_first_menu=input()
-		print("상세 실행할 항목을 선택하세요.")
+		if selected_first_menu == "99":
+			print("프로그램을 종료합니다.")
+			exit()
 
+		print("상세 실행할 항목을 선택하세요.")
 		go_first_menu(selected_first_menu)
 		start_main()
 	except KeyboardInterrupt:
