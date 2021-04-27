@@ -1,4 +1,5 @@
 import utils.exec_aws_cmd_util as cmdUtil
+import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
@@ -23,10 +24,10 @@ def create_subnet():
 		ret_obj = search_subnets_byCidr(selectedVpcInfoArr[2], subnetCidrB)
 		if len(ret_obj) > 0:
 			print("입력하신 IP 대역이 이미 등록되어 있습니다.")
-			exit()
+			goMain.go_main()
 	else:
 		print("잘못 입력하셨습니다. 프로그램을 다시 시작해주세요.")
-		exit()
+		goMain.go_main()
 
 	command = 'aws ec2 create-subnet --vpc-id '+selectedVpcInfoArr[2]+' --cidr-block '+subnetCidrB+' --availability-zone ap-northeast-2a --query Subnet.SubnetId --output text'
 	credSubnetId = cmdUtil.create_resource(command, subnetNm)
@@ -63,7 +64,7 @@ def search_all_subnets_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 subnet을 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -91,7 +92,7 @@ def select_subnet():
 	ret_obj = search_subnets('search-all')
 	if len(ret_obj) < 1:
 		print("먼저 Subnet을 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		objArr=[]
 		i=0
@@ -104,7 +105,7 @@ def select_subnet():
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):

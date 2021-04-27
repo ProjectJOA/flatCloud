@@ -4,6 +4,7 @@ import network.my_subnet as mySubnet
 import network.my_securitygroup as mysg
 import network.my_keypairs as mykeys
 import iam.my_roles as myroles
+import utils.go_main as goMain
 # import start_manage_myaws as startMain
 
 def create_instance():
@@ -67,7 +68,7 @@ def search_instance_image(searchStr):
 	ret_obj = cmdUtil.getJson_exec_commd(command)
 	if len(ret_obj) < 1:
 		print("해당 이미지가 없습니다.")
-		exit()
+		goMain.go_main()
 	else:
 		objArr=[]
 		i=0
@@ -80,7 +81,7 @@ def search_instance_image(searchStr):
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):
@@ -133,7 +134,7 @@ def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 	ret_obj = search_ec2instance(search_vpc, search_subnet, search_tagname, instance_state)
 	if len(ret_obj) < 1:
 		print("먼저 ec2 Instance를 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		objArr=[]
 		i=0
@@ -146,7 +147,7 @@ def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):
@@ -179,10 +180,10 @@ def start_instance():
 		command = "aws ec2 "+commd_str+" --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print(comment_1+" 요청이 완료되었습니다.")
-		exit()
+		goMain.go_main()
 	else:
 		print("처음으로 돌아갑니다.")
-		exit()
+		goMain.go_main()
 	return "success"	
 
 
@@ -196,10 +197,10 @@ def stop_instance():
 		command = "aws ec2 stop-instances --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print("중지 요청이 완료되었습니다.")
-		exit()
+		goMain.go_main()
 	else:
 		print("처음으로 돌아갑니다.")
-		exit()
+		goMain.go_main()
 	return "success"
 	
 def remove_instance():
@@ -211,8 +212,8 @@ def remove_instance():
 		command = "aws ec2 terminate-instances --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print("삭제 요청이 완료되었습니다.")
-		exit()
+		goMain.go_main()
 	else:
 		print("처음으로 돌아갑니다.")
-		exit()
+		goMain.go_main()
 	return "success"	

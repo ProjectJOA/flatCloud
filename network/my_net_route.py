@@ -1,4 +1,5 @@
 import utils.exec_aws_cmd_util as cmdUtil
+import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import network.my_subnet as mySubnet
 import network.my_gateway as myGw
@@ -64,7 +65,7 @@ def search_all_routeTables_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 route table을 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -78,7 +79,7 @@ def select_routeTable(searchVpcId):
 	ret_obj = search_routeTables(searchVpcId)
 	if len(ret_obj) < 1:
 		print("먼저 Route Table 을 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		objArr=[]
 		i=0
@@ -91,7 +92,7 @@ def select_routeTable(searchVpcId):
 	# 사용자가 입력한 번호가 rr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 obj를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):

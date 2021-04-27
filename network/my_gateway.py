@@ -1,4 +1,5 @@
 import utils.exec_aws_cmd_util as cmdUtil
+import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
@@ -18,8 +19,8 @@ def create_gateway():
 		selectedVpcInfoArr = myVpcs.select_vpc()
 		attach_gw_to_vpc(credGwId, selectedVpcInfoArr[2])
 	else:
-		print("프로그램을 종료합니다.")
-		exit()
+		print("처음 시작 메뉴로 이동합니다.")
+		goMain.go_main()
 	retStr = {"GatewayId":credGwId,"vpcId":selectedVpcInfoArr[2]}
 	return retStr
 
@@ -39,7 +40,7 @@ def search_all_gw_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -62,7 +63,7 @@ def select_gw():
 	ret_obj = search_gw()
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
-		exit()
+		goMain.go_main()
 	else:
 		objArr=[]
 		i=0
@@ -75,7 +76,7 @@ def select_gw():
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		exit()
+		goMain.go_main()
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):
