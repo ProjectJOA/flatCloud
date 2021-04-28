@@ -3,6 +3,42 @@ import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
+def create_sg():
+	print("Security Group 을 생성합니다.")
+	print("Security Group 생성시 이름을 입력하세요 (예 test_sg): ")
+	sgNm=input()	#생성될 object 이름.
+	print("Security Group 을 생성할 Vpc를 선택합니다.")
+	# 등록된 vpc 목록을 가져옵니다.
+	selectedVpcInfoArr = myVpcs.select_vpc()
+	print("Security Group 생성중입니다.")	
+	command = 'aws ec2 create-security-group --group-name '+sgNm+' --description "'+sgNm+'" --vpc-id '+selectedVpcInfoArr[2]+' --query GroupId --output text'
+	credGwId = cmdUtil.create_resource(command, sgNm)
+	print("Security Group 이 생성되었습니다.")
+	retStr = {"SecurityGroupId":credGwId, "SecurityGroupNm":sgNm}
+	return retStr
+
+def add_inoutBound(doType):
+	doComment = "Inbound"
+	awsCmd = "authorize-security-group-ingress"
+	if doType == "out":
+		doComment = "Outbound"
+		awsCmd = "authorize-security-group-egress"
+
+	print("Security Group 에 "+doComment+" 를 추가합니다.")
+	print("먼저 추가할 Security Group을 선택합니다.")
+	selectedSGInfoArr = select_sg("","")
+	print("TCP Protocol 만 등록 가능합니다.")
+	print("허용할 Port 를 입력해주세요 (예: 80)")
+	inPort=input()
+	print("허용할 IP 대역을 입력해주세요 (예: 192.168.10.23/32")
+	inipRange=input()
+	if cmdUtil.ipValidate(inipRange):
+		print(doComment+" 정책 추가 중입니다.")
+		command = 'aws ec2 '+awsCmd+' --group-id '+selectedSGInfoArr[1]+' --ip-permissions IpProtocol=tcp,FromPort='+inPort+',ToPort='+inPort+',IpRanges="[{CidrIp='+inipRange+'}]"'
+		cmdUtil.exec_commd(command)
+	
+	return "success"
+
 def search_sg(srcKey,srcStr):
 	search_wd=""
 	if srcKey == "vpc-id":
@@ -37,6 +73,8 @@ def get_simple_sg_info(jsonObj):
 		tagValue = cmdUtil.getString_tagValue(jsonObj.get("Tags"),tagKey)
 	retVpcInfo = tagValue+" : "+GroupId+" : "+vpcId
 	return retVpcInfo
+
+#def search_sg_inoutBound(doType):
 
 def select_sg(srcKey,srcStr):
 	ret_obj = search_sg(srcKey,srcStr)

@@ -7,7 +7,7 @@ import instance.my_ec2instance as myec2
 import json
 
 def go_first_menu(selected_first_menu):
-	second_common_menu = "0.뒤로가기 1.조회 2.신규생성 3.수정 4.삭제"	
+	second_common_menu = "p.뒤로가기 1.조회 2.신규생성 3.수정 4.삭제"	
 	selected_second_menu=""
 	if selected_first_menu == "1": # vpc 선택 
 		print(second_common_menu) # 상세 메뉴 출력
@@ -18,7 +18,7 @@ def go_first_menu(selected_first_menu):
 		elif selected_second_menu == "2":
 			json_res = myvpcs.create_vpc()
 			print(json_res)
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "p":
 			start_main()
 		else:
 			print("준비중입니다.")
@@ -30,7 +30,7 @@ def go_first_menu(selected_first_menu):
 		elif selected_second_menu == "2":
 			json_res = mysubnet.create_subnet()
 			print(json_res)
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "p":
 			start_main()			
 		else:	
 			print("준비중입니다.")
@@ -42,7 +42,7 @@ def go_first_menu(selected_first_menu):
 			objArr = mygw.search_all_gw_arr()
 		elif selected_second_menu == "2":
 			json_res = mygw.create_gateway()
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "p":
 			start_main()			
 		else:	
 			print("준비중입니다.")
@@ -55,16 +55,24 @@ def go_first_menu(selected_first_menu):
 		elif selected_second_menu == "2":
 			json_res = myroute.create_routeTable()
 			print(json_res)
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "p":
 			start_main()			
 		else:	
 			print("준비중입니다.")				
 	elif selected_first_menu == "5": # Security Group 선택
 		print(second_common_menu) # 상세 메뉴 출력
+		print("5.Inbound 추가 6.Inbound 삭제")
+		print("7.Outbound 추가 8.Outbound 삭제")
 		selected_second_menu=input()
 		if selected_second_menu == "1":
 			objArr = mysg.search_all_sg_arr()
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "2":
+			objArr = mysg.create_sg()
+		elif selected_second_menu == "5":
+			objArr = mysg.add_inoutBound("in")			
+		elif selected_second_menu == "7":
+			objArr = mysg.add_inoutBound("out")						
+		elif selected_second_menu == "p":
 			start_main()				
 		else:				
 			print("준비중입니다.")
@@ -82,7 +90,7 @@ def go_first_menu(selected_first_menu):
 			objArr = myec2.start_instance()
 		elif selected_second_menu == "6":
 			objArr = myec2.stop_instance()
-		elif selected_second_menu == "0":
+		elif selected_second_menu == "p":
 			start_main()
 		else:
 			print("준비중입니다")
@@ -93,7 +101,7 @@ def start_main():
 	try:
 		first_menu1 = "1.Vpc 2.Subnet 3.Internet Gateway 4.Route Table 5.Security Group"
 		first_menu2 = "6.ec2 instance"
-		first_menu3 = "99.flatCloud 종료"
+		first_menu3 = "x.flatCloud 종료"
 
 		print("\n아래 관리 항목중 하나를 선택하세요.")
 		print(first_menu1) # 메뉴 출력
@@ -101,7 +109,7 @@ def start_main():
 		print(first_menu3) # 메뉴 출력
 
 		selected_first_menu=input()
-		if selected_first_menu == "99":
+		if selected_first_menu == "x":
 			print("프로그램을 종료합니다.")
 			exit()
 
@@ -111,4 +119,6 @@ def start_main():
 	except KeyboardInterrupt:
 		print("프로그램을 종료합니다.")
 		exit() #종료
+	except Exception as e:
+		print("프로그램 실행중 오류가 발생하였습니다.",e)
 		
