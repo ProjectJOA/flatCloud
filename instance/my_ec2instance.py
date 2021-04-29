@@ -13,8 +13,19 @@ def create_instance():
 	instanceNm=input()		#생성될 object들의 접두사.
 	instanceId=""
 	print("instance 로 생성할 linux이미지를 선택합니다.")
-	# 등록된 vpc 목록을 가져옵니다.
-	selectedImageInfoArr = search_instance_image("")
+	print("linux 이미지는 Default로 amazon Linux를 설치합니다.")
+	print("1.Default로 설치합니다. 2.검색해서 설치합니다.")
+	nextStep=input()
+	selectedImageInfoArr = []
+	searchImageKeyword = ""
+	if nextStep == "2":
+		while 0<1:
+			print("이미지를 검색할 단어를 입력하세요.")
+			searchImageKeyword=input()
+			selectedImageInfoArr = search_instance_image(searchImageKeyword)
+			if selectedImageInfoArr != "research":
+				break
+	#selectedImageInfoArr = search_instance_image("")
 	#selectedImageInfoArr[3]
 	print("Subnet을 선택합니다.")
 	selectedSubnetInfoArr = mySubnet.select_subnet()
@@ -66,6 +77,7 @@ def search_instance_image(searchStr):
 		searchStr = "*"+searchStr+"*"
 	command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
 	ret_obj = cmdUtil.getJson_exec_commd(command)
+	selectedObjInfoArr=[]
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("해당 이미지가 없습니다.")
@@ -77,17 +89,21 @@ def search_instance_image(searchStr):
 			objInfo = get_simple_image_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
+	print("p.다시 검색해서 선택합니다.")			
 	selectedNo=input()
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
-	if int(selectedNo) > len(objArr):
+	if selectedNo == "p" or selectedNo == "P":
+		selectedObjInfoArr = "research"
+	elif int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
 		goMain.go_main()
-	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
-	selectedObjInfoArr=[]
-	for index in range(len(objArr)):
-		if selectedNo == str(index+1):
-			selectedObjInfoArr = (objArr[index]).split(' : ')
-			break
+	else:
+		# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
+		selectedObjInfoArr = (objArr[selectedNo-1]).split(' : ')
+	# for index in range(len(objArr)):
+	# 	if selectedNo == str(index+1):
+	# 		selectedObjInfoArr = (objArr[index]).split(' : ')
+	# 		break
 
 	return selectedObjInfoArr	
 
