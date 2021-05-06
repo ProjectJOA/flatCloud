@@ -72,10 +72,14 @@ def search_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 
 def search_instance_image(searchStr):
 	if searchStr == "":
-		searchStr = "amzn2-ami-hvm-*-x86_64-gp2"
+		command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-hvm-*-x86_64-gp2" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
+	#elif (searchStr.lower()).contains("ubuntu"):
+	elif "ubuntu" in searchStr.lower():
+		command = 'aws ec2 describe-images --image-id ami-04876f29fd3a5e8ba ami-0ba5cd124d7a79612 ami-08508144e576d5b64 --query "reverse(sort_by(Images, &CreationDate))[:3]"'
 	else:
 		searchStr = "*"+searchStr+"*"
-	command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
+		command = 'aws ec2 describe-images --owners amazon --filters "Name=name,Values='+searchStr+'" "Name=state,Values=available" --query "reverse(sort_by(Images, &CreationDate))[:3]"'
+
 	ret_obj = cmdUtil.getJson_exec_commd(command)
 	selectedObjInfoArr=[]
 	objArr=[]
@@ -99,7 +103,7 @@ def search_instance_image(searchStr):
 		goMain.go_main()
 	else:
 		# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
-		selectedObjInfoArr = (objArr[selectedNo-1]).split(' : ')
+		selectedObjInfoArr = (objArr[int(selectedNo)-1]).split(' : ')
 	# for index in range(len(objArr)):
 	# 	if selectedNo == str(index+1):
 	# 		selectedObjInfoArr = (objArr[index]).split(' : ')
