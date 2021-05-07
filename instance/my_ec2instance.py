@@ -150,6 +150,16 @@ def get_simple_ec2instance_info(jsonObj):
 	retInfo = cmdUtil.nullToNoname(tagValue,"noname")+" : "+currentState+" : "+PublicIpAddress+" : "+PrivateIpAddress+" : "+InstanceId+" : "+VpcId+" : "+SubnetId
 	return retInfo
 
+def select_ec2instance_byId(instanceId):
+	command = "aws ec2 describe-instances --instance-ids "+instanceId+" --query Reservations[*].Instances[0]"
+	json_res = cmdUtil.getJson_exec_commd(command)
+	objInfo=""
+	selectedObjInfoArr=[]
+	for oneObj in json_res:
+		objInfo = get_simple_ec2instance_info(oneObj)
+	selectedObjInfoArr = objInfo.split(' : ')
+	return selectedObjInfoArr
+
 def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state):
 	ret_obj = search_ec2instance(search_vpc, search_subnet, search_tagname, instance_state)
 	objArr=[]	

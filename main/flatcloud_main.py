@@ -2,6 +2,7 @@ import network.my_vpcs as myvpcs
 import network.my_subnet as mysubnet
 import network.my_gateway as mygw
 import network.my_net_route as myroute
+import network.my_elb as myelb
 import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
 import json
@@ -99,13 +100,24 @@ def go_first_menu(selected_first_menu):
 			start_main()
 		else:
 			print("준비중입니다")
+	elif selected_first_menu == "7": # load balance 선택
+		print(second_common_menu) # 상세 메뉴 출력 
+		selected_second_menu=input()
+		if selected_second_menu == "1":
+			objArr = myelb.search_all_elb()
+		elif selected_second_menu == "2":
+			objArr = myelb.create_loadBalance()
+		elif selected_second_menu == "4":
+			objArr = myelb.del_elb()
+		else:
+			print("준비중입니다")
 	else:
 		print("준비중입니다")
 
 def start_main():
 	try:
 		first_menu1 = "1.Vpc 2.Subnet 3.Internet Gateway 4.Route Table 5.Security Group"
-		first_menu2 = "6.ec2 instance"
+		first_menu2 = "6.ec2 instance 7.load Balance"
 		first_menu3 = "x.flatCloud 종료"
 
 		print("\n아래 관리 항목중 하나를 선택하세요.")
