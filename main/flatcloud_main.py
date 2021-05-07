@@ -62,17 +62,21 @@ def go_first_menu(selected_first_menu):
 	elif selected_first_menu == "5": # Security Group 선택
 		print(second_common_menu) # 상세 메뉴 출력
 		print("5.Inbound/Outbound 조회")
-		print("6.Inbound 추가 7.Inbound 삭제")
-		print("8.Outbound 추가 9.Outbound 삭제")
+		print("6.Inbound 추가 7.Outbound 추가")
+		print("8.Inbound/Outbound 삭제")
 		selected_second_menu=input()
 		if selected_second_menu == "1":
 			objArr = mysg.search_all_sg_arr()
 		elif selected_second_menu == "2":
 			objArr = mysg.create_sg()
+		elif selected_second_menu == "5":
+			objArr = mysg.search_inoutBound("inout")
 		elif selected_second_menu == "6":
 			objArr = mysg.add_inoutBound("in")			
+		elif selected_second_menu == "7":
+			objArr = mysg.add_inoutBound("out")
 		elif selected_second_menu == "8":
-			objArr = mysg.add_inoutBound("out")						
+			objArr = mysg.del_inoutBound()
 		elif selected_second_menu == "p":
 			start_main()				
 		else:				

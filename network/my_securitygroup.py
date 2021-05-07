@@ -39,6 +39,26 @@ def add_inoutBound(doType):
 	
 	return "success"
 
+def del_inoutBound():
+	awsCmd = ""
+	selectedObj = select_inoutBound()
+	selectedInOutBoundArr = (selectedObj).split(' | ')
+	print("선택하신 ("+selectedObj+") 삭제하시겠습니까?(y/n)")
+	nextStep2_YN=input()
+	if nextStep2_YN.lower() == 'y':
+		if selectedInOutBoundArr[0] == "in":
+			awsCmd = "revoke-security-group-ingress"
+		else:
+			awsCmd = " revoke-security-group-egress"
+		#revoke-security-group-ingress
+	command = 'aws ec2 '+awsCmd+' --group-id '+selectedInOutBoundArr[5]+' --ip-permissions IpProtocol='+selectedInOutBoundArr[4]
+	if selectedInOutBoundArr[4] != "-1":
+		command = command+',FromPort='+selectedInOutBoundArr[2]+',ToPort='+selectedInOutBoundArr[3]
+	command = command+',IpRanges="[{CidrIp='+selectedInOutBoundArr[1]+'}]"'
+	cmdUtil.exec_commd(command)
+	print("선택하신 ("+selectedObj+") 삭제되었습니다.")
+	return "success"
+
 def search_sg(srcKey,srcStr):
 	search_wd=""
 	if srcKey == "vpc-id":
@@ -74,7 +94,28 @@ def get_simple_sg_info(jsonObj):
 	retVpcInfo = tagValue+" : "+GroupId+" : "+vpcId
 	return retVpcInfo
 
-#def search_sg_inoutBound(doType):
+def get_simple_inoutBound_info(inoutType, sgId, jsonObj):
+	try:
+		inoutBoundArr = []
+		for inoutB in jsonObj:
+			ipProtocol = inoutB.get("IpProtocol")
+			if ipProtocol == "-1":
+				fromPort = "All"
+				toPort = "All"
+			else:
+				fromPort = str(inoutB.get("FromPort"))
+				toPort = str(inoutB.get("ToPort"))
+			for cidrIps in inoutB.get("IpRanges"):
+				cidrIpsStr = cidrIps.get("CidrIp")
+				inoutObj = inoutType+" | "+cidrIpsStr+" | "+fromPort+" | "+toPort+" | "+ipProtocol+" | "+sgId
+				inoutBoundArr.append(inoutObj)
+			for cidrIps in inoutB.get("Ipv6Ranges"):
+				cidrIpsStr = cidrIps.get("CidrIpv6")
+				inoutObj = inoutType+" | "+cidrIpsStr+" | "+fromPort+" | "+toPort+" | "+ipProtocol+" | "+sgId
+				inoutBoundArr.append(inoutObj)
+		return inoutBoundArr
+	except Exception as e:
+		print(e)		
 
 def select_sg(srcKey,srcStr):
 	ret_obj = search_sg(srcKey,srcStr)
@@ -102,3 +143,34 @@ def select_sg(srcKey,srcStr):
 			break
 
 	return selectedObjInfoArr		
+
+def search_inoutBound(searchtype):
+	print("먼저 Security Group을 선택합니다.")
+	selectedSGInfoArr = select_sg("","")
+	command = 'aws ec2 describe-security-groups --group-ids '+selectedSGInfoArr[1]+' --query SecurityGroups[0]'
+	json_res = cmdUtil.getJson_exec_commd(command)
+	retArr = []
+	if len(json_res.get("IpPermissions")) > 0:
+		retArr = retArr + get_simple_inoutBound_info("in",selectedSGInfoArr[1], json_res.get("IpPermissions"))
+	if len(json_res.get("IpPermissionsEgress")) > 0:
+		retArr = retArr + get_simple_inoutBound_info("out",selectedSGInfoArr[1], json_res.get("IpPermissionsEgress"))
+	i=0
+	for retObj in retArr:
+		i+=1
+		print(str(i)+"."+retObj)
+	return retArr	
+
+def select_inoutBound():
+	retArr = search_inoutBound("inout")
+	print("p.처음으로 가기")
+	selectNo="0"
+	while 1>0:
+		print("삭제할 IN/OUT 정책을 선택합니다.")
+		selectNo=input()
+		if selectNo.lower() == "p":
+			goMain.go_main()
+		elif int(selectNo) > len(retArr):
+			print("잘못 선택하셨습니다.")
+		else:
+			break
+	return retArr[int(selectNo)-1]
