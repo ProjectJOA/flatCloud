@@ -101,6 +101,7 @@ def go_first_menu(selected_first_menu):
 			print("준비중입니다")
 	elif selected_first_menu == "7": # load balance 선택
 		print(second_common_menu) # 상세 메뉴 출력 
+		print("5.허용 Port 조회 6.허용 Port 추가 7.허용 Port 삭제")
 		selected_second_menu=input()
 		if selected_second_menu == "1":
 			objArr = myelb.search_all_elb()
@@ -108,6 +109,14 @@ def go_first_menu(selected_first_menu):
 			objArr = myelb.create_loadBalance()
 		elif selected_second_menu == "4":
 			objArr = myelb.del_elb()
+		elif selected_second_menu == "5":
+			objArr = myelb.search_elb_listeners()	
+		elif selected_second_menu == "6":
+			objArr = myelb.add_elb_listener()
+		elif selected_second_menu == "7":
+			objArr = myelb.del_elb_listener()
+		elif selected_second_menu == "p":
+			start_main()			
 		else:
 			print("준비중입니다")
 	else:

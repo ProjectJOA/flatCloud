@@ -1,9 +1,12 @@
 import utils.exec_aws_cmd_util as cmdUtil
 import utils.go_main as goMain
+import main.flatcloud_main as flatMain
 import network.my_subnet as mySubnet
 import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
 import json
+
+selected_first_menu = "7" # 1 단계 선택 메뉴 번호
 
 def create_loadBalance():
     print("load Balance는 http(80) 만 생성 가능합니다.")
@@ -41,6 +44,76 @@ def set_configure_healthCheck(inputElbNm):
     command = 'aws elb configure-health-check --load-balancer-name '+inputElbNm+' --health-check Target=HTTP:80/'+inputFileNm+',Interval=30,UnhealthyThreshold=2,HealthyThreshold=2,Timeout=3'
     cmdUtil.exec_commd(command)
     return "success"
+
+def del_elb_listener():
+    print("먼저 ELB를 선택합니다.")
+    selectElbArr = select_elb()
+    print("ELB 에 등록된 Port를 조회합니다.")
+    objArr = select_elb_listeners(selectElbArr[0])
+
+    print("삭제하실 Port를 선택하세요")
+    while 1>0:
+        selectPortNo=input()
+        if (int(selectPortNo)-1)>len(objArr):
+            print("잘못 선택하셨습니다. 다시 선택하세요.")
+        else:
+            selectedElbPort = objArr[(int(selectPortNo)-1)]
+            selectedElbPortArr = selectedElbPort.split(" : ")
+            print("선택하신 ("+selectedElbPort+")를 삭제하시겠습니까?(y/n)")
+            nextStep2_YN=input()
+            if nextStep2_YN.lower() == "y":
+                command = 'aws elb delete-load-balancer-listeners --load-balancer-name '+selectElbArr[0]
+                command = command +' --load-balancer-ports '+selectedElbPortArr[1]
+                retStr = cmdUtil.exec_commd(command3)
+            else:
+                break
+
+    if nextStep2_YN.lower() == "n":
+        print("2단계 메뉴로 이동합니다.")
+        flatMain.go_first_menu(selected_first_menu)    
+
+def add_elb_listener():
+    print("먼저 ELB를 선택합니다.")
+    selectElbArr = select_elb()
+    print("ELB 에 등록된 Port를 조회합니다.")
+    objArr = select_elb_listeners(selectElbArr[0])
+
+    print("허용 Port를 추가하시겠습니까?(y/n)")
+    nextStep2_YN=input()
+    if nextStep2_YN.lower() == "n":
+        print("2단계 메뉴로 이동합니다.")
+        flatMain.go_first_menu(selected_first_menu)
+
+    print("Protocol을 선택하세요.")
+    print("1.HTTP 2.TCP")
+    inputProtocol="0"
+    while 1>0:
+        inputProtocol=input()
+        if inputProtocol == "1" or inputProtocol == "2":
+            if inputProtocol == "1":
+                inputProtocol="HTTP"
+            else:
+                inputProtocol="TCP"
+            break
+        else:
+            print("다시 선택해주세요.")
+    print("ELB Port를 입력하세요.(예: 80)")
+    inputElbPort=input()
+    print("연결할 Instance의 Port를 입력하세요.(예: 80)")
+    inputInstPort=input()
+    print("추가 할 정보("+inputProtocol+" : "+inputElbPort+" : "+inputInstPort+")로 등록하시겠습니까?(y/n)")
+    nextStep2_YN=input()
+    if nextStep2_YN.lower() == "y":
+        command = 'aws elb create-load-balancer-listeners --load-balancer-name '+selectElbArr[0]
+        command = command+' --listeners "Protocol='+inputProtocol+',LoadBalancerPort='+inputElbPort+',InstanceProtocol='+inputProtocol+',InstancePort='+inputInstPort+'"'
+        retStr = cmdUtil.exec_commd(command)
+        print("ELB에 Port가 추가되었습니다.")
+    else:
+        print("2단계 메뉴로 이동합니다.")
+        flatMain.go_first_menu(selected_first_menu)    
+
+def deregister_Instance(elbNm):
+    return ""
 
 def register_Instance(inputElbNm, selectedSubnetInfoArr):
     instanceArr = myec2.search_all_ec2instance(selectedSubnetInfoArr[4], selectedSubnetInfoArr[3], "")
@@ -82,11 +155,7 @@ def register_Instance(inputElbNm, selectedSubnetInfoArr):
 
 def del_elb():
     print("삭제할 ELB 를 선택해주세요")
-    objArr = search_elb()
-    i=0
-    for obj in objArr:
-        i+=1
-        print(str(i)+"."+obj)
+    objArr = search_all_elb()
     selectedNo=""
     while 1>0:
         selectedNo=input()
@@ -112,13 +181,22 @@ def get_simple_elb_info(jsonObj):
     elbObj = elbNm+" : "+dnsNm+" : "+instanceIds
     return elbObj
 
+def get_simple_elb_listener_info(jsonObj):
+    elbObj = ""
+    protocol = jsonObj.get("Protocol")
+    elbPort = str(jsonObj.get("LoadBalancerPort"))
+    instanceProtocol = jsonObj.get("InstanceProtocol")
+    instancePort = str(jsonObj.get("InstancePort"))
+    elbObj = protocol+" : "+elbPort+" : "+instanceProtocol+" : "+instancePort
+    return elbObj    
+
 def search_all_elb():
     objArr = search_elb()
     i=0
     for obj in objArr:
         i+=1
         print(str(i)+"."+obj)
-    # return objArr
+    return objArr
 
 def search_elb():
     command = 'aws elb describe-load-balancers --query LoadBalancerDescriptions[*]'
@@ -132,3 +210,44 @@ def search_elb():
             objArr.append(get_simple_elb_info(elbinfo))
     return objArr
 
+def search_elb_listeners():
+    print("먼저 ELB 를 선택해주세요")
+    objArr = search_all_elb()
+    selectedNo=0
+    while 1>0:
+        selectedNo=input()
+        if int(selectedNo)>len(objArr):
+            print("잘못 선택하셨습니다. 다시 선택해주세요.")
+        else:
+            break
+    selectElbArr = (objArr[int(selectedNo) - 1]).split(' : ')
+    objArr = select_elb_listeners(selectElbArr[0])
+    return objArr
+
+def select_elb():
+    objArr = search_all_elb()
+    selectedNo=0
+    while 1>0:
+        selectedNo=input()
+        if int(selectedNo)>len(objArr):
+            print("잘못 선택하셨습니다. 다시 선택해주세요.")
+        else:
+            break
+    selectElbArr = (objArr[int(selectedNo) - 1]).split(' : ')
+    return selectElbArr    
+
+def select_elb_listeners(searchElbNm):
+    command = 'aws elb describe-load-balancers --load-balancer-names '+searchElbNm+' --query LoadBalancerDescriptions[0].ListenerDescriptions[*].Listener '
+    json_res = cmdUtil.getJson_exec_commd(command)
+    objArr=[] 
+    if len(json_res) < 1:
+        print("ELB에 허용 Port가 설정되어 있지 않습니다.")
+    else:
+        print("현재 ELB에 허용 Port는 아래와 같습니다.")
+        i=0
+        for elbinfo in json_res:
+            i+=1
+            listenerObj = get_simple_elb_listener_info(elbinfo)
+            print(str(i)+"."+listenerObj)
+            objArr.append(listenerObj)
+    return objArr      
