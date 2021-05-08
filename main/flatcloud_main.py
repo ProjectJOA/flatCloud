@@ -15,7 +15,6 @@ def go_first_menu(selected_first_menu):
 		selected_second_menu=input()
 		if selected_second_menu == "1":
 			objArr = myvpcs.search_all_vpcs_arr()
-			start_main()
 		elif selected_second_menu == "2":
 			json_res = myvpcs.create_vpc()
 			print(json_res)
@@ -113,6 +112,9 @@ def go_first_menu(selected_first_menu):
 			print("준비중입니다")
 	else:
 		print("준비중입니다")
+	print("")
+	print("상세 실행할 항목을 선택하세요.")
+	go_first_menu(selected_first_menu)
 
 def start_main():
 	try:

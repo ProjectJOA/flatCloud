@@ -58,7 +58,7 @@ def search_all_vpcs_arr():
 			i+=1
 			vpcInfo = get_simple_vpc_info(vpcObj)
 			vpcArr.append(vpcInfo)
-			print(vpcInfo)
+			print(str(i)+"."+vpcInfo)
 	return vpcArr
 
 def search_vpcs_byCidr(cidr ):
