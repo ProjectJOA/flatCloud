@@ -81,7 +81,7 @@ def search_all_sg_arr():
 			i+=1
 			objInfo = get_simple_sg_info(oneObj)
 			objArr.append(objInfo)
-			print(objInfo)
+			print(str(i)+"."+objInfo)
 	return objArr
 
 def get_simple_sg_info(jsonObj):
