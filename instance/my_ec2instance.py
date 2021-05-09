@@ -31,18 +31,24 @@ def create_instance():
 	instanceId=""
 	print("instance 로 생성할 linux이미지를 선택합니다.")
 	print("linux 이미지는 Default로 amazon Linux를 설치합니다.")
-	print("1.Default로 설치합니다. 2.검색해서 설치합니다.")
-	nextStep=input()
-	selectedImageInfoArr = []
-	searchImageKeyword = ""
-	if nextStep == "2":
-		while 0<1:
-			print("이미지를 검색할 단어를 입력하세요.")
-			searchImageKeyword=input()
-			selectedImageInfoArr = search_instance_image(searchImageKeyword)
-			if selectedImageInfoArr != "research":
-				break
-	#selectedImageInfoArr = search_instance_image("")
+	while 1>0:
+		print("1.Default로 설치합니다. 2.검색해서 설치합니다.")
+		nextStep=input()
+		selectedImageInfoArr = []
+		searchImageKeyword = ""
+		if nextStep == "2":
+			while 0<1:
+				print("이미지를 검색할 단어를 입력하세요.")
+				searchImageKeyword=input()
+				selectedImageInfoArr = search_instance_image(searchImageKeyword)
+				if selectedImageInfoArr != "research":
+					break
+			break
+		elif nextStep == "1":
+			selectedImageInfoArr = search_instance_image("")
+			break
+		else:
+			print("잘못 선택하셨습니다. 다시 선택해주세요.")
 	#selectedImageInfoArr[3]
 	print("Subnet을 선택합니다.")
 	selectedSubnetInfoArr = mySubnet.select_subnet()
@@ -57,16 +63,13 @@ def create_instance():
 	print("instance 를 생성하시겠습니까?(y/n)")
 	netStepYN=input()
 	if netStepYN.lower() == 'y':
-		try:
-			command = "aws ec2 run-instances --image-id "+selectedImageInfoArr[3]
-			command = command+" --instance-type t2.micro --count 1"
-			command = command+" --subnet-id "+selectedSubnetInfoArr[3]+" --associate-public-ip-address"
-			command = command+" --security-group-ids "+selectedSGInfoArr[1]
-			command = command+" --iam-instance-profile Name="+selectedInstanceProfileInfoArr[0]+" --key-name "+selectedkeysInfoArr[1]
-			command = command+" --query Instances[*].InstanceId --output text"
-			instanceId = cmdUtil.create_resource(command, instanceNm)
-		except Exception as e:
-			print(e)
+		command = "aws ec2 run-instances --image-id "+selectedImageInfoArr[3]
+		command = command+" --instance-type t2.micro --count 1"
+		command = command+" --subnet-id "+selectedSubnetInfoArr[3]+" --associate-public-ip-address"
+		command = command+" --security-group-ids "+selectedSGInfoArr[1]
+		command = command+" --iam-instance-profile Name="+selectedInstanceProfileInfoArr[0]+" --key-name "+selectedkeysInfoArr[1]
+		command = command+" --query Instances[*].InstanceId --output text"
+		instanceId = cmdUtil.create_resource(command, instanceNm)
 	print("Instance 생성 되었습니다.")
 	retStr = {"instanceNm":instanceNm, "instanceId":instanceId}
 	return retStr
