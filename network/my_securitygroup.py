@@ -3,6 +3,24 @@ import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
+def sg_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_sg_arr()
+	elif selected_second_menu == "2":
+		json_res = create_sg()
+	elif selected_second_menu == "5":
+		json_res = search_inoutBound("inout")
+	elif selected_second_menu == "6":
+		json_res = add_inoutBound("in")			
+	elif selected_second_menu == "7":
+		json_res = add_inoutBound("out")
+	elif selected_second_menu == "8":
+		json_res = del_inoutBound()
+	else:				
+		print("준비중입니다.")
+	return json_res
+
 def create_sg():
 	print("Security Group 을 생성합니다.")
 	print("Security Group 생성시 이름을 입력하세요 (예 test_sg): ")

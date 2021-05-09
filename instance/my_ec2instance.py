@@ -7,6 +7,23 @@ import iam.my_roles as myroles
 import utils.go_main as goMain
 # import start_manage_myaws as startMain
 
+
+def ec2inst_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_ec2instance("","","")
+	elif selected_second_menu == "2":
+		json_res = create_instance()
+	elif selected_second_menu == "4":
+		json_res = remove_instance()						
+	elif selected_second_menu == "5":
+		json_res = start_instance()
+	elif selected_second_menu == "6":
+		json_res = stop_instance()
+	else:
+		print("준비중입니다")	
+	return json_res
+
 def create_instance():
 	print("ec2 instance 를 생성합니다.")
 	print("instance 생성시 이름을 입력하세요 : ")

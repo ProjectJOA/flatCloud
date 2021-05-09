@@ -3,6 +3,16 @@ import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
+def subnet_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_subnets_arr()
+	elif selected_second_menu == "2":
+		json_res = create_subnet()
+	else:	
+		print("준비중입니다.")
+	return json_res
+
 def create_subnet():
 	print("AWS Subnet을 생성합니다.")
 	print("Subnet 생성시 이름을 입력하세요 : ")

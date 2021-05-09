@@ -7,118 +7,54 @@ import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
 import json
 
-def go_first_menu(selected_first_menu):
-	second_common_menu = "p.뒤로가기 1.조회 2.신규생성 3.수정 4.삭제"	
-	selected_second_menu=""
-	if selected_first_menu == "1": # vpc 선택 
-		print(second_common_menu) # 상세 메뉴 출력
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = myvpcs.search_all_vpcs_arr()
-		elif selected_second_menu == "2":
-			json_res = myvpcs.create_vpc()
-			print(json_res)
-		elif selected_second_menu == "p":
-			start_main()
-		else:
-			print("준비중입니다.")
-	elif selected_first_menu == "2": # subnet 선택 
-		print(second_common_menu) # 상세 메뉴 출력
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = mysubnet.search_all_subnets_arr()
-		elif selected_second_menu == "2":
-			json_res = mysubnet.create_subnet()
-			print(json_res)
-		elif selected_second_menu == "p":
-			start_main()			
-		else:	
-			print("준비중입니다.")
-	elif selected_first_menu == "3": # gateway 선택	
-		print(second_common_menu) # 상세 메뉴 출력
-		print("5.Vpc연결 6.Vpc연결해제")
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = mygw.search_all_gw_arr()
-		elif selected_second_menu == "2":
-			json_res = mygw.create_gateway()
-		elif selected_second_menu == "p":
-			start_main()			
-		else:	
-			print("준비중입니다.")
+def print_second_menus(selected_first_menu):
+	second_common_menu = "1.조회 2.신규생성 3.수정 4.삭제"
+	second_detail_menu = ""
+	second_sys_common_menu = "p.뒤로가기 x.종료하기"
+
+	if selected_first_menu == "3": # gateway 선택	
+		second_detail_menu = "5.Vpc연결 6.Vpc연결해제"
 	elif selected_first_menu == "4": # Route Table 선택
-		print(second_common_menu) # 상세 메뉴 출력
-		print("5.Route 생성 6.Route 삭제")
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = myroute.search_all_routeTables_arr()
-		elif selected_second_menu == "2":
-			json_res = myroute.create_routeTable()
-			print(json_res)
-		elif selected_second_menu == "p":
-			start_main()			
-		else:	
-			print("준비중입니다.")				
+		second_detail_menu = "5.Route 생성 6.Route 삭제"
 	elif selected_first_menu == "5": # Security Group 선택
-		print(second_common_menu) # 상세 메뉴 출력
-		print("5.Inbound/Outbound 조회")
-		print("6.Inbound 추가 7.Outbound 추가")
-		print("8.Inbound/Outbound 삭제")
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = mysg.search_all_sg_arr()
-		elif selected_second_menu == "2":
-			objArr = mysg.create_sg()
-		elif selected_second_menu == "5":
-			objArr = mysg.search_inoutBound("inout")
-		elif selected_second_menu == "6":
-			objArr = mysg.add_inoutBound("in")			
-		elif selected_second_menu == "7":
-			objArr = mysg.add_inoutBound("out")
-		elif selected_second_menu == "8":
-			objArr = mysg.del_inoutBound()
-		elif selected_second_menu == "p":
-			start_main()				
-		else:				
-			print("준비중입니다.")
+		second_detail_menu = "5.Inbound/Outbound 조회 \n6.Inbound 추가 7.Outbound 추가 \n8.Inbound/Outbound 삭제"
 	elif selected_first_menu == "6": # ec2 instance 선택
-		print(second_common_menu) # 상세 메뉴 출력
-		print("5.instance 리부트/시작 6.instance 종료")
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = myec2.search_all_ec2instance("","","")
-		elif selected_second_menu == "2":
-			objArr = myec2.create_instance()
-		elif selected_second_menu == "4":
-			objArr = myec2.remove_instance()						
-		elif selected_second_menu == "5":
-			objArr = myec2.start_instance()
-		elif selected_second_menu == "6":
-			objArr = myec2.stop_instance()
-		elif selected_second_menu == "p":
-			start_main()
-		else:
-			print("준비중입니다")
+		second_detail_menu = "5.instance 리부트/시작 6.instance 종료"
 	elif selected_first_menu == "7": # load balance 선택
-		print(second_common_menu) # 상세 메뉴 출력 
-		print("5.허용 Port 조회 6.허용 Port 추가 7.허용 Port 삭제")
-		selected_second_menu=input()
-		if selected_second_menu == "1":
-			objArr = myelb.search_all_elb()
-		elif selected_second_menu == "2":
-			objArr = myelb.create_loadBalance()
-		elif selected_second_menu == "4":
-			objArr = myelb.del_elb()
-		elif selected_second_menu == "5":
-			objArr = myelb.search_elb_listeners()	
-		elif selected_second_menu == "6":
-			objArr = myelb.add_elb_listener()
-		elif selected_second_menu == "7":
-			objArr = myelb.del_elb_listener()
-		elif selected_second_menu == "p":
-			start_main()			
-		else:
-			print("준비중입니다")
+		second_detail_menu = "5.허용 Port 조회 6.허용 Port 추가 7.허용 Port 삭제"
+
+	print(second_common_menu) # 2단계 메뉴 출력
+	if second_detail_menu != "":
+		print(second_detail_menu) # 상세 메뉴 출력
+	print(second_sys_common_menu) # 뒤로가기, 종료 메뉴 
+
+
+def go_first_menu(selected_first_menu):
+	selected_second_menu=""
+	print_second_menus(selected_first_menu)
+
+	selected_second_menu=input()
+
+	if selected_second_menu.lower() == "p":
+		start_main()
+	elif selected_second_menu.lower() == "x":
+		print("프로그램을 종료합니다.")
+		exit()
+	json_res = ""
+	if selected_first_menu == "1": # vpc 선택 
+		json_res = myvpcs.vpc_startMain(selected_second_menu)
+	elif selected_first_menu == "2": # subnet 선택 
+		json_res = mysubnet.subnet_startMain(selected_second_menu)
+	elif selected_first_menu == "3": # gateway 선택
+		json_res = mygw.gw_startMain(selected_second_menu)
+	elif selected_first_menu == "4": # Route Table 선택
+		json_res = myroute.route_startMain(selected_second_menu)
+	elif selected_first_menu == "5": # Security Group 선택
+		json_res = mysg.sg_startMain(selected_second_menu)
+	elif selected_first_menu == "6": # ec2 instance 선택
+		json_res = myec2.ec2inst_startMain(selected_second_menu)
+	elif selected_first_menu == "7": # load balance 선택
+		json_res = myelb.elb_startMain(selected_second_menu)
 	else:
 		print("준비중입니다")
 	print("")

@@ -8,6 +8,24 @@ import json
 
 selected_first_menu = "7" # 1 단계 선택 메뉴 번호
 
+def elb_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_elb()
+	elif selected_second_menu == "2":
+		json_res = create_loadBalance()
+	elif selected_second_menu == "4":
+		json_res = del_elb()
+	elif selected_second_menu == "5":
+		json_res = search_elb_listeners()
+	elif selected_second_menu == "6":
+		json_res = add_elb_listener()
+	elif selected_second_menu == "7":
+		json_res = del_elb_listener()                              
+	else:
+		print("준비중입니다.")
+	return json_res
+
 def create_loadBalance():
     print("load Balance는 http(80) 만 생성 가능합니다.")
     print("생성할 ELB의 명칭을 입력하세요.(예: my-elb)")
@@ -64,13 +82,16 @@ def del_elb_listener():
             if nextStep2_YN.lower() == "y":
                 command = 'aws elb delete-load-balancer-listeners --load-balancer-name '+selectElbArr[0]
                 command = command +' --load-balancer-ports '+selectedElbPortArr[1]
-                retStr = cmdUtil.exec_commd(command3)
+                retStr = cmdUtil.exec_commd(command)
+                break
             else:
                 break
 
     if nextStep2_YN.lower() == "n":
         print("2단계 메뉴로 이동합니다.")
-        flatMain.go_first_menu(selected_first_menu)    
+        flatMain.go_first_menu(selected_first_menu)
+
+    return "success"    
 
 def add_elb_listener():
     print("먼저 ELB를 선택합니다.")

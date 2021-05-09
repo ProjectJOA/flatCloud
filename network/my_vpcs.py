@@ -2,6 +2,16 @@ import utils.exec_aws_cmd_util as cmdUtil
 import utils.go_main as goMain
 import json
 
+def vpc_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_vpcs_arr()
+	elif selected_second_menu == "2":
+		json_res = create_vpc()
+	else:
+		print("준비중입니다.")
+	return json_res
+
 #vpc 생성합니다.
 def create_vpc():
 	print("AWS VPC를 생성합니다.")

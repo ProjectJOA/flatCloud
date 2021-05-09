@@ -5,6 +5,16 @@ import network.my_subnet as mySubnet
 import network.my_gateway as myGw
 import json
 
+def route_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_routeTables_arr()
+	elif selected_second_menu == "2":
+		json_res = create_routeTable()			
+	else:	
+		print("준비중입니다.")
+	return json_res
+
 #진행중..
 def create_routeTable():
 	print("Route table을 생성합니다.")
@@ -72,7 +82,7 @@ def search_all_routeTables_arr():
 			i+=1
 			objInfo = get_simple_routeTable_info(oneObj)
 			objArr.append(objInfo)
-			print(objInfo)
+			print(str(i)+"."+objInfo)
 	return objArr
 
 def select_routeTable(searchVpcId):

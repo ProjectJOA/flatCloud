@@ -3,6 +3,16 @@ import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
+def gw_startMain(selected_second_menu):
+	json_res = ""
+	if selected_second_menu == "1":
+		json_res = search_all_gw_arr()
+	elif selected_second_menu == "2":
+		json_res = create_gateway()			
+	else:
+		print("준비중입니다.")
+	return json_res
+
 def create_gateway():
 	print("Gateway를 생성합니다.")
 	print("Gateway 생성시 이름을 입력하세요 : ")
