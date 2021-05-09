@@ -56,15 +56,17 @@ def create_instance():
 
 	print("instance 를 생성하시겠습니까?(y/n)")
 	netStepYN=input()
-	if netStepYN[0] == 'Y' or netStepYN[0] == 'y':
-		command = "aws ec2 run-instances --image-id "+selectedImageInfoArr[3]
-		command = command+" --instance-type t2.micro --count 1"
-		command = command+" --subnet-id "+selectedSubnetInfoArr[3]+" --associate-public-ip-address"
-		command = command+" --security-group-ids "+selectedSGInfoArr[1]
-		command = command+" --iam-instance-profile Name="+selectedInstanceProfileInfoArr[0]+" --key-name "+selectedkeysInfoArr[1]
-		command = command+" --query Instances[*].InstanceId --output text"
-		instanceId = cmdUtil.create_resource(command, instanceNm)
-
+	if netStepYN.lower() == 'y':
+		try:
+			command = "aws ec2 run-instances --image-id "+selectedImageInfoArr[3]
+			command = command+" --instance-type t2.micro --count 1"
+			command = command+" --subnet-id "+selectedSubnetInfoArr[3]+" --associate-public-ip-address"
+			command = command+" --security-group-ids "+selectedSGInfoArr[1]
+			command = command+" --iam-instance-profile Name="+selectedInstanceProfileInfoArr[0]+" --key-name "+selectedkeysInfoArr[1]
+			command = command+" --query Instances[*].InstanceId --output text"
+			instanceId = cmdUtil.create_resource(command, instanceNm)
+		except Exception as e:
+			print(e)
 	print("Instance 생성 되었습니다.")
 	retStr = {"instanceNm":instanceNm, "instanceId":instanceId}
 	return retStr
