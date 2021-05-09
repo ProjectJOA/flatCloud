@@ -21,7 +21,7 @@ def print_second_menus(selected_first_menu):
 	elif selected_first_menu == "6": # ec2 instance 선택
 		second_detail_menu = "5.instance 리부트/시작 6.instance 종료"
 	elif selected_first_menu == "7": # load balance 선택
-		second_detail_menu = "5.허용 Port 조회 6.허용 Port 추가 7.허용 Port 삭제"
+		second_detail_menu = "5.허용 Port 조회 6.허용 Port 추가 7.허용 Port 삭제 \n8.연결된 instance 조회 9.instance 연결/해제"
 
 	print(second_common_menu) # 2단계 메뉴 출력
 	if second_detail_menu != "":

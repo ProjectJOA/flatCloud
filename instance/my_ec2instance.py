@@ -175,11 +175,10 @@ def get_simple_ec2instance_info(jsonObj):
 def select_ec2instance_byId(instanceId):
 	command = "aws ec2 describe-instances --instance-ids "+instanceId+" --query Reservations[*].Instances[0]"
 	json_res = cmdUtil.getJson_exec_commd(command)
-	objInfo=""
 	selectedObjInfoArr=[]
 	for oneObj in json_res:
 		objInfo = get_simple_ec2instance_info(oneObj)
-	selectedObjInfoArr = objInfo.split(' : ')
+		selectedObjInfoArr.append(objInfo)
 	return selectedObjInfoArr
 
 def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state):

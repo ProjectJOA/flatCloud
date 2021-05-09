@@ -21,7 +21,11 @@ def elb_startMain(selected_second_menu):
 	elif selected_second_menu == "6":
 		json_res = add_elb_listener()
 	elif selected_second_menu == "7":
-		json_res = del_elb_listener()                              
+		json_res = del_elb_listener()
+	elif selected_second_menu == "8": #instance 조회
+		json_res = search_registered_Instance_with_elb([])
+	elif selected_second_menu == "9": #instance 할당/해제
+		json_res = set_elb_instance()  
 	else:
 		print("준비중입니다.")
 	return json_res
@@ -50,8 +54,8 @@ def create_loadBalance():
     # health check 설정
     retStr = set_configure_healthCheck(inputElbNm)
     if retStr == "success":
-        # instance 연결
-        register_Instance(inputElbNm, selectedSubnetInfoArr)
+        # instance 연결 parameter : elbNm, vpcid, subnetId
+        register_Instance(inputElbNm, selectedSubnetInfoArr[4], selectedSubnetInfoArr[3])
 
     return "success"
 
@@ -88,8 +92,7 @@ def del_elb_listener():
                 break
 
     if nextStep2_YN.lower() == "n":
-        print("2단계 메뉴로 이동합니다.")
-        flatMain.go_first_menu(selected_first_menu)
+        goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동  
 
     return "success"    
 
@@ -102,8 +105,7 @@ def add_elb_listener():
     print("허용 Port를 추가하시겠습니까?(y/n)")
     nextStep2_YN=input()
     if nextStep2_YN.lower() == "n":
-        print("2단계 메뉴로 이동합니다.")
-        flatMain.go_first_menu(selected_first_menu)
+        goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동
 
     print("Protocol을 선택하세요.")
     print("1.HTTP 2.TCP")
@@ -130,14 +132,66 @@ def add_elb_listener():
         retStr = cmdUtil.exec_commd(command)
         print("ELB에 Port가 추가되었습니다.")
     else:
-        print("2단계 메뉴로 이동합니다.")
-        flatMain.go_first_menu(selected_first_menu)    
+        goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동   
 
-def deregister_Instance(elbNm):
-    return ""
+# elb에 연결된 instance 할당 해제
+def search_registered_Instance_with_elb(selectElbArr):
+    if len(selectElbArr) < 1:
+        print("먼저 ELB를 선택합니다.")
+        selectElbArr = select_elb()
+    print("ELB 에 연결된 Instance를 조회합니다.")
+    if selectElbArr[2] == "":
+        print("연결된 Instance가 존재하지 않습니다.")
+        goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동
+    registeredInstancesArr = selectedObjInfoArr = myec2.select_ec2instance_byId(selectElbArr[2])
+    regInstAndElbNmArr = []
+    for idx, val in enumerate(registeredInstancesArr):
+        regInstAndElbNmArr.append(val+" : "+selectElbArr[0])
+        print(str(idx+1)+"."+val+" : "+selectElbArr[0])
+    return regInstAndElbNmArr
 
-def register_Instance(inputElbNm, selectedSubnetInfoArr):
-    instanceArr = myec2.search_all_ec2instance(selectedSubnetInfoArr[4], selectedSubnetInfoArr[3], "")
+def set_elb_instance():
+    print("먼저 ELB를 선택합니다.")
+    selectElbArr = select_elb()    
+    print("1.instance연결 2.instance 연결해제")
+    inputNextStep=input()
+    if inputNextStep.lower() == "p":
+        goMain.go_second_menu(selected_first_menu)    
+    elif inputNextStep == "1":
+        register_Instance(selectElbArr[0], selectElbArr[3], selectElbArr[4])
+    elif inputNextStep == "2":
+        deregister_Instance(selectElbArr)
+    else:
+        print("잘못 선택하셨습니다.")
+        goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동
+    return "success"
+
+# elb에 연결된 instance 할당 해제
+def deregister_Instance(selectElbArr):
+    registeredInstancesArr = search_registered_Instance_with_elb(selectElbArr)
+    print("연결해제할 instance를 선택하세요.")
+    while 1>0:
+        selectedInstNo=input()
+        if int(selectedInstNo) > len(registeredInstancesArr):
+            print("잘못 선택하셨습니다. 다시 선택해주세요.")
+        else:
+            objArr = (registeredInstancesArr[int(selectedInstNo)-1]).split(" : ")
+            print("선택하신 instance("+objArr[0]+")를 ELB에서 연결해제 하시겠습니까?(y/n)")
+            nextStep1_YN=input()
+            if nextStep1_YN.lower() == "p":
+                goMain.go_second_menu(selected_first_menu)
+            if nextStep1_YN.lower() == "y":
+                command = 'aws elb deregister-instances-from-load-balancer --load-balancer-name '+objArr[7]
+                command = command+' --instances '+objArr[4]
+                retStr = cmdUtil.exec_commd(command)
+                print("연결된 instance를 해제했습니다.")
+                break
+            else:
+                print("다시 선택해주세요.")        
+    return "success"
+
+def register_Instance(inputElbNm, vpcId, subnetId):
+    instanceArr = myec2.search_all_ec2instance(vpcId, subnetId, "")
     i=0
     while 1>0:
         selectedNos = []
@@ -196,10 +250,12 @@ def get_simple_elb_info(jsonObj):
     dnsNm = jsonObj.get("DNSName")
     instanceIds = ""
     instanceArr = jsonObj.get("Instances")
+    vpcId = jsonObj.get("VPCId")
+    subnetId = jsonObj.get("Subnets")[0]
     if len(instanceArr) > 0:
         for instObj in instanceArr:
-            instanceIds = instObj.get("InstanceId")+" "
-    elbObj = elbNm+" : "+dnsNm+" : "+instanceIds
+            instanceIds = instanceIds+instObj.get("InstanceId")+" "
+    elbObj = elbNm+" : "+dnsNm+" : "+instanceIds+" : "+vpcId+" : "+subnetId
     return elbObj
 
 def get_simple_elb_listener_info(jsonObj):
@@ -210,6 +266,22 @@ def get_simple_elb_listener_info(jsonObj):
     instancePort = str(jsonObj.get("InstancePort"))
     elbObj = protocol+" : "+elbPort+" : "+instanceProtocol+" : "+instancePort
     return elbObj    
+
+# elb에 연결된 instance 정보 조회
+def search_elb_instances(inputElbNm):
+    command = 'aws elb describe-load-balancers --load-balancer-names '+inputElbNm+' --query LoadBalancerDescriptions[0].Instances[*]'
+    json_res = cmdUtil.getJson_exec_commd(command)
+    
+    if len(json_res) < 1:
+        print("ELB에 할당된 instance가 없습니다.")
+        flatMain.go_first_menu(selected_first_menu)
+
+    instanceIds = ""
+    for elbinfo in json_res:
+        instanceIds = instanceIds+" "+elbinfo.get("InstanceId")
+
+    selectedObjInfoArr = myec2.select_ec2instance_byId(instanceIds)
+    return selectedObjInfoArr
 
 def search_all_elb():
     objArr = search_elb()
