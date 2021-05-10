@@ -5,6 +5,8 @@ import network.my_subnet as mySubnet
 import network.my_gateway as myGw
 import json
 
+selected_first_menu = "4" # 1 단계 선택 메뉴 번호
+
 def route_startMain(selected_second_menu):
 	json_res = ""
 	if selected_second_menu == "1":

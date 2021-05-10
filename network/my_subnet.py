@@ -3,6 +3,8 @@ import utils.go_main as goMain
 import network.my_vpcs as myVpcs
 import json
 
+selected_first_menu = "2" # 1 단계 선택 메뉴 번호
+
 def subnet_startMain(selected_second_menu):
 	json_res = ""
 	if selected_second_menu == "1":

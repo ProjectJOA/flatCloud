@@ -7,6 +7,7 @@ import iam.my_roles as myroles
 import utils.go_main as goMain
 # import start_manage_myaws as startMain
 
+selected_first_menu = "6" # 1 단계 선택 메뉴 번호
 
 def ec2inst_startMain(selected_second_menu):
 	json_res = ""

@@ -2,6 +2,8 @@ import utils.exec_aws_cmd_util as cmdUtil
 import utils.go_main as goMain
 import json
 
+selected_first_menu = "1" # 1 단계 선택 메뉴 번호
+
 def vpc_startMain(selected_second_menu):
 	json_res = ""
 	if selected_second_menu == "1":
@@ -31,6 +33,8 @@ def create_vpc():
 		while 0<1:
 			print("IP 대역을 직접 입력해주세요. 예) 10.5.0.0/16")
 			vpc_ips=input()
+			# 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
+			goMain.go_secondOrExit(vpc_ips, selected_first_menu)
 			ret_obj = search_vpcs_byCidr(vpc_ips)
 			if len(ret_obj) > 0:
 				print("입력하신 IP 대역이 이미 등록되어 있습니다.")
@@ -39,8 +43,7 @@ def create_vpc():
 				break
 			
 	else:
-		print("잘못 입력하셨습니다. 프로그램을 다시 시작해주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 
 	command = 'aws ec2 create-vpc --cidr-block '+vpc_ips+' --query Vpc.VpcId --output text'
 	credVpcId = cmdUtil.create_resource(command, vpcNm)
