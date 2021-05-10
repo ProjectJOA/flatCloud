@@ -34,16 +34,16 @@ def create_loadBalance():
     print("load Balance는 http(80) 만 생성 가능합니다.")
     print("생성할 ELB의 명칭을 입력하세요.(예: my-elb)")
     print("ELB 명칭은 알파벳과 - 만 입력가능합니다.")
-    inputElbNm=input()
+    inputElbNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     print("Subnet을 선택합니다.")
     selectedSubnetInfoArr = mySubnet.select_subnet()
     print("ELB에 적용할 Security Group을 선택합니다.")
     selectedSGInfoArr = mysg.select_sg("vpc-id",selectedSubnetInfoArr[4])
     print("ELB에 연결할 instance 의 port를 입력하세요.(예: 80)")
-    inputInstPort=input()
+    inputInstPort=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     # print("생성할 Protocol을 선택하세요.")
     # print("1.http/https 2.http 3.https ")
-    # inputProtocol=input()
+    # inputProtocol=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     command = 'aws elb create-load-balancer --load-balancer-name '+inputElbNm+' --listeners'
     command = command+' "Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort='+inputInstPort+'" '
     command = command+' --subnets '+selectedSubnetInfoArr[3]+' --security-groups '+selectedSGInfoArr[1]
@@ -62,7 +62,7 @@ def create_loadBalance():
 def set_configure_healthCheck(inputElbNm):
     print("ELB health check 설정을 진행합니다.")
     print("Health Check 할 Ping Path 를 입력해주세요.")
-    inputFileNm=input()
+    inputFileNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     command = 'aws elb configure-health-check --load-balancer-name '+inputElbNm+' --health-check Target=HTTP:80/'+inputFileNm+',Interval=30,UnhealthyThreshold=2,HealthyThreshold=2,Timeout=3'
     cmdUtil.exec_commd(command)
     return "success"
@@ -75,14 +75,14 @@ def del_elb_listener():
 
     print("삭제하실 Port를 선택하세요")
     while 1>0:
-        selectPortNo=input()
+        selectPortNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if (int(selectPortNo)-1)>len(objArr):
             print("잘못 선택하셨습니다. 다시 선택하세요.")
         else:
             selectedElbPort = objArr[(int(selectPortNo)-1)]
             selectedElbPortArr = selectedElbPort.split(" : ")
             print("선택하신 ("+selectedElbPort+")를 삭제하시겠습니까?(y/n)")
-            nextStep2_YN=input()
+            nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
             if nextStep2_YN.lower() == "y":
                 command = 'aws elb delete-load-balancer-listeners --load-balancer-name '+selectElbArr[0]
                 command = command +' --load-balancer-ports '+selectedElbPortArr[1]
@@ -103,7 +103,7 @@ def add_elb_listener():
     objArr = select_elb_listeners(selectElbArr[0])
 
     print("허용 Port를 추가하시겠습니까?(y/n)")
-    nextStep2_YN=input()
+    nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     if nextStep2_YN.lower() == "n":
         goMain.go_second_menu(selected_first_menu) # 이전 메뉴로 이동
 
@@ -111,7 +111,7 @@ def add_elb_listener():
     print("1.HTTP 2.TCP")
     inputProtocol="0"
     while 1>0:
-        inputProtocol=input()
+        inputProtocol=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if inputProtocol == "1" or inputProtocol == "2":
             if inputProtocol == "1":
                 inputProtocol="HTTP"
@@ -121,11 +121,11 @@ def add_elb_listener():
         else:
             print("다시 선택해주세요.")
     print("ELB Port를 입력하세요.(예: 80)")
-    inputElbPort=input()
+    inputElbPort=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     print("연결할 Instance의 Port를 입력하세요.(예: 80)")
-    inputInstPort=input()
+    inputInstPort=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     print("추가 할 정보("+inputProtocol+" : "+inputElbPort+" : "+inputInstPort+")로 등록하시겠습니까?(y/n)")
-    nextStep2_YN=input()
+    nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
     if nextStep2_YN.lower() == "y":
         command = 'aws elb create-load-balancer-listeners --load-balancer-name '+selectElbArr[0]
         command = command+' --listeners "Protocol='+inputProtocol+',LoadBalancerPort='+inputElbPort+',InstanceProtocol='+inputProtocol+',InstancePort='+inputInstPort+'"'
@@ -154,10 +154,8 @@ def set_elb_instance():
     print("먼저 ELB를 선택합니다.")
     selectElbArr = select_elb()    
     print("1.instance연결 2.instance 연결해제")
-    inputNextStep=input()
-    if inputNextStep.lower() == "p":
-        goMain.go_second_menu(selected_first_menu)    
-    elif inputNextStep == "1":
+    inputNextStep=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
+    if inputNextStep == "1":
         register_Instance(selectElbArr[0], selectElbArr[3], selectElbArr[4])
     elif inputNextStep == "2":
         deregister_Instance(selectElbArr)
@@ -171,13 +169,13 @@ def deregister_Instance(selectElbArr):
     registeredInstancesArr = search_registered_Instance_with_elb(selectElbArr)
     print("연결해제할 instance를 선택하세요.")
     while 1>0:
-        selectedInstNo=input()
+        selectedInstNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if int(selectedInstNo) > len(registeredInstancesArr):
             print("잘못 선택하셨습니다. 다시 선택해주세요.")
         else:
             objArr = (registeredInstancesArr[int(selectedInstNo)-1]).split(" : ")
             print("선택하신 instance("+objArr[0]+")를 ELB에서 연결해제 하시겠습니까?(y/n)")
-            nextStep1_YN=input()
+            nextStep1_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
             if nextStep1_YN.lower() == "p":
                 goMain.go_second_menu(selected_first_menu)
             if nextStep1_YN.lower() == "y":
@@ -201,7 +199,7 @@ def register_Instance(inputElbNm, vpcId, subnetId):
             print("x 를 입력하면 선택이 종료됩니다.")
             
             while 1>0:
-                inputInstNo=input()
+                inputInstNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
                 if inputInstNo.lower() == "x":
                     print("선택을 종료합니다.")
                     break                
@@ -219,7 +217,7 @@ def register_Instance(inputElbNm, vpcId, subnetId):
             print("를 선택하셨습니다.")
             print("Instance 선택을 완료하시겠습니까?(y/n)")
             print("n 을 입력하시면 instance 를 다시 선택 가능합니다.")
-            nextStep2_YN=input()
+            nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
             if nextStep2_YN.lower() == "y":
                 break
 
@@ -233,7 +231,7 @@ def del_elb():
     objArr = search_all_elb()
     selectedNo=""
     while 1>0:
-        selectedNo=input()
+        selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if int(selectedNo)>len(objArr):
             print("잘못 선택하셨습니다. 다시 선택해주세요.")
         else:
@@ -297,10 +295,29 @@ def search_elb():
     objArr=[]
     if len(json_res) < 1:
         print("먼저 ELB 를 생성해주세요.")
-        goMain.go_main()
+        goMain.go_second_menu(selected_first_menu)
     else:
         for elbinfo in json_res:
             objArr.append(get_simple_elb_info(elbinfo))
+    return objArr
+
+def get_elb_instances():
+    objArr=[]
+    command = 'aws elb describe-load-balancers --query LoadBalancerDescriptions[*]'
+    json_res = cmdUtil.getJson_exec_commd(command)
+    if len(json_res) > 0:
+        for elbinfo in json_res:
+            elbNm = elbinfo.get("LoadBalancerName")
+            dnsNm = elbinfo.get("DNSName")
+            instanceArr = elbinfo.get("Instances")
+            if len(instanceArr) > 0:
+                for instObj in instanceArr:
+                    instanceId = instObj.get("InstanceId")
+                    elbInstObj = elbNm+" : "+dnsNm+" : "+instanceId
+                    objArr.append(elbInstObj)
+            else:
+                elbInstObj = elbNm+" : "+dnsNm+" : "
+                objArr.append(elbInstObj)
     return objArr
 
 def search_elb_listeners():
@@ -308,7 +325,7 @@ def search_elb_listeners():
     objArr = search_all_elb()
     selectedNo=0
     while 1>0:
-        selectedNo=input()
+        selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if int(selectedNo)>len(objArr):
             print("잘못 선택하셨습니다. 다시 선택해주세요.")
         else:
@@ -321,7 +338,7 @@ def select_elb():
     objArr = search_all_elb()
     selectedNo=0
     while 1>0:
-        selectedNo=input()
+        selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
         if int(selectedNo)>len(objArr):
             print("잘못 선택하셨습니다. 다시 선택해주세요.")
         else:

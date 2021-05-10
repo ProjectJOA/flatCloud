@@ -3,6 +3,7 @@ import network.my_vpcs as myVpcs
 import network.my_subnet as mySubnet
 import network.my_securitygroup as mysg
 import network.my_keypairs as mykeys
+import network.my_elb as myelb
 import iam.my_roles as myroles
 import utils.go_main as goMain
 # import start_manage_myaws as startMain
@@ -21,9 +22,36 @@ def ec2inst_startMain(selected_second_menu):
 		json_res = start_instance()
 	elif selected_second_menu == "6":
 		json_res = stop_instance()
+	elif selected_second_menu == "7":
+		json_res = get_simple_instanceinfo()
 	else:
 		print("준비중입니다")	
 	return json_res
+
+def get_simple_instanceinfo():
+	elbInstArr = myelb.get_elb_instances()
+
+	ret_obj = search_ec2instance("", "", "", "")
+	instArr=[]
+	for idx, oneObj in enumerate(ret_obj):
+		InstanceId = oneObj.get("InstanceId")
+		objInfo = get_simple_ec2instance_info(oneObj)
+		dnsYn="N"
+		for idx, elbObj in enumerate(elbInstArr):
+			elbInfoArr = elbObj.split(" : ")
+			if InstanceId == elbInfoArr[2]:
+				objInfo = objInfo+" : "+elbInfoArr[1]
+				dnsYn="Y"
+				break
+		if dnsYn == "N":
+			objInfo = objInfo+" : no elb"
+		instArr = objInfo.split(" : ")
+		print(instArr[0])
+		print(instArr[2])
+		print(instArr[4])
+		print(instArr[7])
+		print("")
+	return "success"
 
 def create_instance():
 	print("ec2 instance 를 생성합니다.")
