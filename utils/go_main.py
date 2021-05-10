@@ -4,6 +4,15 @@ import json
 def go_main():
     flatcloud.start_main()
 
+def goPage_inputValCheck(selected_first_menu):
+    inputVal=input()
+    if inputVal.lower() == "p":
+        go_second_menu(selected_first_menu)
+    elif inputVal.lower() == "x":
+        exit_flatcloud()
+    return inputVal
+
+
 def go_secondOrExit(inputVal, selected_first_menu):
     try:
         if inputVal.lower() == "p":

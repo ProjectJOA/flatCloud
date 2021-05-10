@@ -21,7 +21,7 @@ def route_startMain(selected_second_menu):
 def create_routeTable():
 	print("Route table을 생성합니다.")
 	print("Route table 생성시 이름을 입력하세요 (예 test_public_RT): ")
-	routeTableNm=input()	#생성될 object 이름.
+	routeTableNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	print("Route table을 생성할 Vpc를 선택합니다.")
 	# 등록된 vpc 목록을 가져옵니다.
 	selectedVpcInfoArr = myVpcs.select_vpc()
@@ -33,7 +33,7 @@ def create_routeTable():
 	#route 생성..- gateway연결등 start..
 	print("Public network 이용을 위해 route-table에 Gateway를 연결해야 합니다.")
 	print("route-table에 Internet Gateway 또는 NAT Gateway를 연결을 진행하시겠습니까? (y/n)")
-	nextStepYN=input()
+	nextStepYN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStepYN[0] == 'Y' or nextStepYN[0] == 'y':
 		create_route()
 	#route 생성..- gateway연결등 end..
@@ -92,7 +92,7 @@ def select_routeTable(searchVpcId):
 	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Route Table 을 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -100,11 +100,11 @@ def select_routeTable(searchVpcId):
 			objInfo = get_simple_routeTable_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 rr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 obj를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):

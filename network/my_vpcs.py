@@ -26,23 +26,20 @@ def create_vpc():
 	vpc_ips=get_unregistered_vpcmax_cidr(5)
 	print(vpc_ips+" IP 대역으로 Vpc를 생성합니다.")
 	print("1.생성합니다. 2.IP 대역을 직접 입력합니다.")
-	step1=input()
+	step1=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if step1 == "1":
 		print("Vpc 생성을 시작합니다.")
 	elif step1 == "2":
 		while 0<1:
 			print("IP 대역을 직접 입력해주세요. 예) 10.5.0.0/16")
-			vpc_ips=input()
-			# 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
-			goMain.go_secondOrExit(vpc_ips, selected_first_menu)
+			vpc_ips=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 			ret_obj = search_vpcs_byCidr(vpc_ips)
 			if len(ret_obj) > 0:
-				print("입력하신 IP 대역이 이미 등록되어 있습니다.")
-				goMain.go_main()
+				print("입력하신 IP 대역이 이미 등록되어 있습니다. 다시 입력해주세요")
 			else:
-				break
-			
+				break			
 	else:
+		print("잘못 입력하셨습니다.")
 		goMain.go_second_menu(selected_first_menu)
 
 	command = 'aws ec2 create-vpc --cidr-block '+vpc_ips+' --query Vpc.VpcId --output text'
@@ -64,7 +61,7 @@ def search_all_vpcs_arr():
 	vpcArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Vpc를 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for vpcObj in ret_obj:
@@ -104,7 +101,7 @@ def select_vpc():
 	ret_obj = search_vpcs("search-all")
 	if len(ret_obj) < 1:
 		print("먼저 Vpc를 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for vpcObj in ret_obj:
@@ -112,11 +109,11 @@ def select_vpc():
 			vpcInfo = get_simple_vpc_info(vpcObj)
 			vpcArr.append(vpcInfo)
 			print(str(i)+"."+vpcInfo)
-	selectedVpcNo=input()
+	selectedVpcNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedVpcNo) > len(vpcArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedVpcInfoArr=[]
 	for index in range(len(vpcArr)):

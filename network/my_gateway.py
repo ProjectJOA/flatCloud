@@ -18,21 +18,20 @@ def gw_startMain(selected_second_menu):
 def create_gateway():
 	print("Gateway를 생성합니다.")
 	print("Gateway 생성시 이름을 입력하세요 : ")
-	gwNm=input()		#생성될 object들의 접두사.
+	gwNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	print("Gateway를 생성합니다.")		
 	command = 'aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId --output text'
 	credGwId = cmdUtil.create_resource(command, gwNm)
 	print("Internet gateway가 생성되었습니다.")
 	print("생성하신 Gateway와 Vpc를 연결하시겠습니까?(y/n)")
-	nextStepYN=input()
+	nextStepYN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStepYN == 'Y' or nextStepYN == 'y':
 		print("연결할 vpc를 선택하세요.")
 		# 등록된 vpc 목록을 가져옵니다.
 		selectedVpcInfoArr = myVpcs.select_vpc()
 		attach_gw_to_vpc(credGwId, selectedVpcInfoArr[2])
 	else:
-		print("처음 시작 메뉴로 이동합니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	retStr = {"GatewayId":credGwId,"vpcId":selectedVpcInfoArr[2]}
 	return retStr
 
@@ -52,7 +51,7 @@ def search_all_gw_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -76,7 +75,7 @@ def select_gw():
 	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Internet gateway를 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -84,11 +83,11 @@ def select_gw():
 			objInfo = get_simple_gw_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):

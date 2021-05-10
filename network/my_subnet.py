@@ -18,7 +18,7 @@ def subnet_startMain(selected_second_menu):
 def create_subnet():
 	print("AWS Subnet을 생성합니다.")
 	print("Subnet 생성시 이름을 입력하세요 : ")
-	subnetNm=input()		#생성될 object들의 접두사.
+	subnetNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	print("Subnet을 생성할 Vpc를 선택합니다.")
 	# 등록된 vpc 목록을 가져옵니다.
 	selectedVpcInfoArr = myVpcs.select_vpc()
@@ -27,19 +27,19 @@ def create_subnet():
 	subnetCidrB = get_unregistered_subnetmax_cidr(selectedVpcInfoArr[2], selectedVpcInfoArr[1])
 	print(subnetCidrB+" cidr-block으로 subnet을 생성하시겠습니까?")
 	print("1.생성합니다. 2.IP 대역을 직접 입력합니다.")
-	step1=input()
+	step1=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if step1 == "1":
 		print("subnet 생성 진행중입니다.")
 	elif step1 == "2":
 		print("IP 대역을 직접 입력해주세요. 예) "+subnetCidrB)
-		subnetCidrB=input()
+		subnetCidrB=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 		ret_obj = search_subnets_byCidr(selectedVpcInfoArr[2], subnetCidrB)
 		if len(ret_obj) > 0:
 			print("입력하신 IP 대역이 이미 등록되어 있습니다.")
-			goMain.go_main()
+			goMain.go_second_menu(selected_first_menu)
 	else:
 		print("잘못 입력하셨습니다. 프로그램을 다시 시작해주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 
 	command = 'aws ec2 create-subnet --vpc-id '+selectedVpcInfoArr[2]+' --cidr-block '+subnetCidrB+' --availability-zone ap-northeast-2a --query Subnet.SubnetId --output text'
 	credSubnetId = cmdUtil.create_resource(command, subnetNm)
@@ -76,7 +76,7 @@ def search_all_subnets_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 subnet을 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -105,7 +105,7 @@ def select_subnet():
 	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Subnet을 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -113,11 +113,11 @@ def select_subnet():
 			objInfo = get_simple_subnet_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):

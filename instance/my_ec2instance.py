@@ -28,19 +28,19 @@ def ec2inst_startMain(selected_second_menu):
 def create_instance():
 	print("ec2 instance 를 생성합니다.")
 	print("instance 생성시 이름을 입력하세요 : ")
-	instanceNm=input()		#생성될 object들의 접두사.
+	instanceNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	instanceId=""
 	print("instance 로 생성할 linux이미지를 선택합니다.")
 	print("linux 이미지는 Default로 amazon Linux를 설치합니다.")
 	while 1>0:
 		print("1.Default로 설치합니다. 2.검색해서 설치합니다.")
-		nextStep=input()
+		nextStep=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 		selectedImageInfoArr = []
 		searchImageKeyword = ""
 		if nextStep == "2":
 			while 0<1:
 				print("이미지를 검색할 단어를 입력하세요.")
-				searchImageKeyword=input()
+				searchImageKeyword=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 				selectedImageInfoArr = search_instance_image(searchImageKeyword)
 				if selectedImageInfoArr != "research":
 					break
@@ -62,7 +62,7 @@ def create_instance():
 	selectedInstanceProfileInfoArr = myroles.select_instance_profiles()
 
 	print("instance 를 생성하시겠습니까?(y/n)")
-	netStepYN=input()
+	netStepYN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if netStepYN.lower() == 'y':
 		command = "aws ec2 run-instances --image-id "+selectedImageInfoArr[3]
 		command = command+" --instance-type t2.micro --count 1"
@@ -108,7 +108,7 @@ def search_instance_image(searchStr):
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("해당 이미지가 없습니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -117,13 +117,13 @@ def search_instance_image(searchStr):
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
 	print("p.다시 검색해서 선택합니다.")			
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if selectedNo == "p" or selectedNo == "P":
 		selectedObjInfoArr = "research"
 	elif int(selectedNo) > len(objArr):
 		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 		selectedObjInfoArr = (objArr[int(selectedNo)-1]).split(' : ')
@@ -187,7 +187,7 @@ def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 ec2 Instance를 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -195,11 +195,11 @@ def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 			objInfo = get_simple_ec2instance_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 vpc arr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 vpcid를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):
@@ -212,7 +212,7 @@ def select_ec2instance(search_vpc, search_subnet, search_tagname, instance_state
 
 def start_instance():
 	print("1.instance 리부팅 2.instance 시작")
-	nextStep1_YN=input()
+	nextStep1_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	search_instance_state="running"
 	comment_1 = "리부팅"
 	commd_str = "reboot-instances"
@@ -227,15 +227,14 @@ def start_instance():
 	print("ec2 Instance를 선택해 주세요.")
 	selectedObjInfoArr = select_ec2instance("", "", "", search_instance_state)
 	print("("+selectedObjInfoArr[0]+")"+selectedObjInfoArr[4]+" instance 를 "+comment_1+"하시겠습니까?(y/n)")
-	nextStep2_YN=input()
+	nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStep2_YN[0] == 'Y' or nextStep2_YN[0] == 'y':
 		command = "aws ec2 "+commd_str+" --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print(comment_1+" 요청이 완료되었습니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
-		print("처음으로 돌아갑니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	return "success"	
 
 
@@ -244,15 +243,14 @@ def stop_instance():
 	print("중지할 ec2 Instance를 선택해 주세요.")
 	selectedObjInfoArr = select_ec2instance("", "", "", search_instance_state)
 	print("("+selectedObjInfoArr[0]+")"+selectedObjInfoArr[4]+" instance 를 중지하시겠습니까?(y/n)")
-	nextStep2_YN=input()
+	nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStep2_YN[0] == 'Y' or nextStep2_YN[0] == 'y':
 		command = "aws ec2 stop-instances --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print("중지 요청이 완료되었습니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
-		print("처음으로 돌아갑니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	return "success"
 	
 def remove_instance():
@@ -260,13 +258,12 @@ def remove_instance():
 	search_instance_state="running,stopping,stopped"
 	selectedObjInfoArr = select_ec2instance("", "", "", search_instance_state)
 	print("("+selectedObjInfoArr[0]+")"+selectedObjInfoArr[4]+" instance 를 삭제하시겠습니까?(y/n)")
-	nextStep2_YN=input()
+	nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStep2_YN[0] == 'Y' or nextStep2_YN[0] == 'y':
 		command = "aws ec2 terminate-instances --instance-ids "+selectedObjInfoArr[4]
 		retMsg = cmdUtil.exec_commd (command)
 		print("삭제 요청이 완료되었습니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
-		print("처음으로 돌아갑니다.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	return "success"	

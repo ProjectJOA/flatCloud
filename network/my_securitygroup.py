@@ -26,7 +26,7 @@ def sg_startMain(selected_second_menu):
 def create_sg():
 	print("Security Group 을 생성합니다.")
 	print("Security Group 생성시 이름을 입력하세요 (예 test_sg): ")
-	sgNm=input()	#생성될 object 이름.
+	sgNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	print("Security Group 을 생성할 Vpc를 선택합니다.")
 	# 등록된 vpc 목록을 가져옵니다.
 	selectedVpcInfoArr = myVpcs.select_vpc()
@@ -49,9 +49,9 @@ def add_inoutBound(doType):
 	selectedSGInfoArr = select_sg("","")
 	print("TCP Protocol 만 등록 가능합니다.")
 	print("허용할 Port 를 입력해주세요 (예: 80)")
-	inPort=input()
+	inPort=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	print("허용할 IP 대역을 입력해주세요 (예: 192.168.10.23/32")
-	inipRange=input()
+	inipRange=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if cmdUtil.ipValidate(inipRange):
 		print(doComment+" 정책 추가 중입니다.")
 		command = 'aws ec2 '+awsCmd+' --group-id '+selectedSGInfoArr[1]+' --ip-permissions IpProtocol=tcp,FromPort='+inPort+',ToPort='+inPort+',IpRanges="[{CidrIp='+inipRange+'}]"'
@@ -64,7 +64,7 @@ def del_inoutBound():
 	selectedObj = select_inoutBound()
 	selectedInOutBoundArr = (selectedObj).split(' | ')
 	print("선택하신 ("+selectedObj+") 삭제하시겠습니까?(y/n)")
-	nextStep2_YN=input()
+	nextStep2_YN=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	if nextStep2_YN.lower() == 'y':
 		if selectedInOutBoundArr[0] == "in":
 			awsCmd = "revoke-security-group-ingress"
@@ -94,7 +94,7 @@ def search_all_sg_arr():
 	objArr=[]
 	if len(ret_obj) < 1:
 		print("먼저 Security group을 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -142,7 +142,7 @@ def select_sg(srcKey,srcStr):
 	objArr=[]	
 	if len(ret_obj) < 1:
 		print("먼저 Security group 을 생성해 주세요.")
-		goMain.go_main()
+		goMain.go_second_menu(selected_first_menu)
 	else:
 		i=0
 		for oneObj in ret_obj:
@@ -150,11 +150,11 @@ def select_sg(srcKey,srcStr):
 			objInfo = get_simple_sg_info(oneObj)
 			objArr.append(objInfo)
 			print(str(i)+"."+objInfo)
-	selectedNo=input()
+	selectedNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 	# 사용자가 입력한 번호가 rr 보다 많으면 처음부터 다시 시작.
 	if int(selectedNo) > len(objArr):
-		print("잘못 선택하셨습니다. 처음부터 다시 시작합니다.")
-		goMain.go_main()
+		print("잘못 선택하셨습니다.")
+		goMain.go_second_menu(selected_first_menu)
 	# 선택한 번호에 맞는 obj를 변수에 저장합니다.
 	selectedObjInfoArr=[]
 	for index in range(len(objArr)):
@@ -186,9 +186,9 @@ def select_inoutBound():
 	selectNo="0"
 	while 1>0:
 		print("삭제할 IN/OUT 정책을 선택합니다.")
-		selectNo=input()
+		selectNo=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
 		if selectNo.lower() == "p":
-			goMain.go_main()
+			goMain.go_second_menu(selected_first_menu)
 		elif int(selectNo) > len(retArr):
 			print("잘못 선택하셨습니다.")
 		else:
