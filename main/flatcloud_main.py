@@ -8,7 +8,7 @@ import instance.my_ec2instance as myec2
 import json
 
 def print_second_menus(selected_first_menu):
-	second_common_menu = "1.조회 \n2.신규생성 \n3.수정 \n4.삭제"
+	second_common_menu = "1.조회 \n2.신규생성 \n4.삭제"
 	second_detail_menu = ""
 	second_sys_common_menu = "p.뒤로가기 x.종료하기"
 
@@ -19,7 +19,7 @@ def print_second_menus(selected_first_menu):
 	elif selected_first_menu == "5": # Security Group 선택
 		second_detail_menu = "5.Inbound/Outbound 조회 \n6.Inbound 추가 \n7.Outbound 추가 \n8.Inbound/Outbound 삭제"
 	elif selected_first_menu == "6": # ec2 instance 선택
-		second_detail_menu = "5.instance 리부트/시작 \n6.instance 종료 \n7.Instance 간략 조회"
+		second_detail_menu = "5.instance 리부트/시작 \n6.instance 종료 \n7.Instance 간략 조회 \n8.ssh 접속"
 	elif selected_first_menu == "7": # load balance 선택
 		second_detail_menu = "5.허용 Port 조회 \n6.허용 Port 추가 \n7.허용 Port 삭제 \n8.연결된 instance 조회 \n9.instance 연결/해제"
 
