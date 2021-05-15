@@ -44,6 +44,7 @@ def get_ssh_access():
 			if instArr[2] != 'no public ip':
 				print(instArr[0])
 				print("ssh -i ~/.ssh/vini_key.pem ec2-user@"+instArr[2])
+				print("aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib && ssh -i ~/.ssh/vini_key.pem ec2-user@54.180.112.42 \"./sti.sh\"")
 			print("")
 	return "success"
 
