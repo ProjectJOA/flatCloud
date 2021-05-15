@@ -5,6 +5,7 @@ import network.my_net_route as myroute
 import network.my_elb as myelb
 import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
+import main.quick_search as quicksearch
 import json
 
 def print_second_menus(selected_first_menu):
@@ -19,7 +20,7 @@ def print_second_menus(selected_first_menu):
 	elif selected_first_menu == "5": # Security Group 선택
 		second_detail_menu = "5.Inbound/Outbound 조회 \n6.Inbound 추가 \n7.Outbound 추가 \n8.Inbound/Outbound 삭제"
 	elif selected_first_menu == "6": # ec2 instance 선택
-		second_detail_menu = "5.instance 리부트/시작 \n6.instance 종료 \n7.Instance 간략 조회 \n8.ssh 접속"
+		second_detail_menu = "5.instance 리부트/시작 \n6.instance 종료 \n7.Instance 간략 조회"
 	elif selected_first_menu == "7": # load balance 선택
 		second_detail_menu = "5.허용 Port 조회 \n6.허용 Port 추가 \n7.허용 Port 삭제 \n8.연결된 instance 조회 \n9.instance 연결/해제"
 
@@ -63,7 +64,7 @@ def go_first_menu(selected_first_menu):
 
 def start_main():
 	try:
-		first_menu1 = "1.Vpc \n2.Subnet \n3.Internet Gateway \n4.Route Table \n5.Security Group"
+		first_menu1 = "0.Quick Search \n1.Vpc \n2.Subnet \n3.Internet Gateway \n4.Route Table \n5.Security Group"
 		first_menu2 = "6.ec2 instance \n7.load Balance"
 		first_menu3 = "x.flatCloud 종료"
 
@@ -76,9 +77,11 @@ def start_main():
 		if selected_first_menu == "x":
 			print("프로그램을 종료합니다.")
 			exit()
-
-		print("상세 실행할 항목을 선택하세요.")
-		go_first_menu(selected_first_menu)
+		elif selected_first_menu == "0":
+			quicksearch.get_ssh_access()
+		else:
+			print("상세 실행할 항목을 선택하세요.")
+			go_first_menu(selected_first_menu)
 		start_main()
 	except KeyboardInterrupt:
 		print("프로그램을 종료합니다.")

@@ -24,29 +24,9 @@ def ec2inst_startMain(selected_second_menu):
 		json_res = stop_instance()
 	elif selected_second_menu == "7":
 		json_res = get_simple_instanceinfo()
-	elif selected_second_menu == "8":
-		json_res = get_ssh_access()		
 	else:
 		print("준비중입니다")	
 	return json_res
-
-def get_ssh_access():
-	print("현재 running 중인 instance 만 나옵니다.")
-	ret_obj = search_ec2instance("", "", "", "running")
-	instArr=[]
-	if len(ret_obj) < 1:
-		print("running 중인 instance가 존재하지 않습니다.")
-	else:
-		for idx, oneObj in enumerate(ret_obj):
-			InstanceId = oneObj.get("InstanceId")
-			objInfo = get_simple_ec2instance_info(oneObj)
-			instArr = objInfo.split(" : ")
-			if instArr[2] != 'no public ip':
-				print(instArr[0])
-				print("ssh -i ~/.ssh/vini_key.pem ec2-user@"+instArr[2])
-				print("aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib && ssh -i ~/.ssh/vini_key.pem ec2-user@54.180.112.42 \"./sti.sh\"")
-			print("")
-	return "success"
 
 def get_simple_instanceinfo():
 	elbInstArr = myelb.get_elb_instances()
