@@ -1,9 +1,3 @@
-import network.my_vpcs as myvpcs
-import network.my_subnet as mysubnet
-import network.my_gateway as mygw
-import network.my_net_route as myroute
-import network.my_elb as myelb
-import network.my_securitygroup as mysg
 import instance.my_ec2instance as myec2
 import json
 
@@ -20,7 +14,11 @@ def get_ssh_access():
 			if instArr[2] != 'no public ip':
 				print(instArr[0])
 				print("ssh -i ~/.ssh/vini_key.pem ec2-user@"+instArr[2])
-				print('aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib')
+				if instArr[0] == 'pvv_ins':
+					print('aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib')
+				else:
+					print('aws s3 sync ~/aws/projectvini-happiness s3://projectvini-happiness')
 				print('ssh -i ~/.ssh/vini_key.pem ec2-user@'+instArr[2]+' "./sti.sh"')
+
 			print("")
 	return "success"
