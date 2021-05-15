@@ -42,6 +42,7 @@ def get_ssh_access():
 			objInfo = get_simple_ec2instance_info(oneObj)
 			instArr = objInfo.split(" : ")
 			if instArr[2] != 'no public ip':
+				print(instArr[0])
 				print("ssh -i ~/.ssh/vini_key.pem ec2-user@"+instArr[2])
 			print("")
 	return "success"
