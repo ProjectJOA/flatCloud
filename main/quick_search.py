@@ -14,11 +14,9 @@ def get_ssh_access():
 			if instArr[2] != 'no public ip':
 				print(instArr[0])
 				print("ssh -i ~/.ssh/vini_key.pem ec2-user@"+instArr[2])
-				if instArr[0] == 'pvv_ins':
+				if instArr[0] != 'pvf_ins':
 					print('aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib')
-				else:
-					print('aws s3 sync ~/aws/projectvini-happiness s3://projectvini-happiness')
-				print('ssh -i ~/.ssh/vini_key.pem ec2-user@'+instArr[2]+' "./sti.sh"')
+					print('ssh -i ~/.ssh/vini_key.pem ec2-user@'+instArr[2]+' "./sti.sh"')
 
 			print("")
 	return "success"
