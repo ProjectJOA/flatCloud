@@ -100,6 +100,9 @@ def create_instance():
 		command = command+" --query Instances[*].InstanceId --output text"
 		instanceId = cmdUtil.create_resource(command, instanceNm)
 	print("Instance 생성 되었습니다.")
+	print("instance OS 명을 입력하세요 (예: ubuntu): ")
+	osNm=goMain.goPage_inputValCheck(selected_first_menu) # 입력시 p, x 입력시 이전 메뉴 또는 프로그램 종료 진행
+	cmdUtil.create_anytag(instanceId,'OSType',osNm)	
 	retStr = {"instanceNm":instanceNm, "instanceId":instanceId}
 	return retStr
 

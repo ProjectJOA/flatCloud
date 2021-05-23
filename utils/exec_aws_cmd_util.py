@@ -12,13 +12,17 @@ def exec_commd (commd):
 	retMsg=((subprocess.check_output(commd, stderr=subprocess.STDOUT, shell=True)).decode("utf-8")).rstrip('\r\n')
 	return retMsg
 
-def create_tagName (resourceId, tagNm):
-	cmd = 'aws ec2 create-tags --resources '+resourceId+' --tags Key=Name,Value='+tagNm
+def create_anytag (resourceId, tagNm, tagValue):
+	cmd = 'aws ec2 create-tags --resources '+resourceId+' --tags Key='+tagNm+',Value='+tagValue
 	exec_commd(cmd)
 
-def create_resource(commd, tagNm):
+def create_tagName (resourceId, tagValue):
+	cmd = 'aws ec2 create-tags --resources '+resourceId+' --tags Key=Name,Value='+tagValue
+	exec_commd(cmd)
+
+def create_resource(commd, tagValue):
 	retId = exec_commd(commd)
-	create_tagName(retId, tagNm)
+	create_tagName(retId, tagValue)
 	return retId	
 
 def getString_tagValue(tagsArr, targetKey):
