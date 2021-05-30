@@ -39,7 +39,7 @@ def get_ssh_access():
 				if InsName == 'pvh_ins':
 					print('aws s3 sync ~/aws/projectvini-happiness s3://projectvini-happiness')
 					print(SshStr+ " ./sti.sh")
-				elif InsName != 'pvf_ins':
+				elif InsName != 'pvv_ins':
 					print('aws s3 sync ~/aws/projectvini-viniilib s3://projectvini-viniilib')
 					print(SshStr+ " ./sti.sh")
 
